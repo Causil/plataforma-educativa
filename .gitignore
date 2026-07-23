@@ -1,0 +1,17 @@
+# ⚠️ DATOS PERSONALES REALES — nunca subir al repo público
+docs/insumos/fotmato LISTADO DE ASISTENCIA.xlsx
+docs/insumos/*ASISTENCIA*.xlsx
+docs/insumos/*asistencia*.xlsx
+
+# Dependencias y builds (futuro)
+node_modules/
+dist/
+build/
+.env
+.env.*
+amplify_outputs.json
+.amplify/
+
+# Sistema
+.DS_Store
+Thumbs.db

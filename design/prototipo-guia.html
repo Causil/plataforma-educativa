@@ -1,0 +1,1591 @@
+<title>GuIA — Prototipo v2</title>
+<style>
+  :root {
+    --paper:#EEF1F7; --surface:#FFFFFF; --surface-2:#F4F6FB;
+    --ink:#141826; --ink-2:#4A5266; --ink-3:#828BA0;
+    --line:#E1E6F0; --line-strong:#CED5E4;
+    --brand:#0FB5A6; --brand-ink:#0B857A; --brand-soft:#DBF3F0;
+    --warm:#FF6B5B; --warm-soft:#FFE6E2;
+    --gold:#E8A93C;
+    --m-low:#F0705A; --m-mid:#F2B33D; --m-high:#17BE9C;
+    --grid: rgba(20,24,38,0.045);
+    --shadow: 0 1px 2px rgba(20,24,38,.05), 0 8px 24px rgba(20,24,38,.06);
+    --radius:18px;
+    --font-display: ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", "Segoe UI", system-ui, sans-serif;
+    --font-body: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#0B0E15; --surface:#141926; --surface-2:#1A2030;
+      --ink:#EAEDF5; --ink-2:#A7AFC2; --ink-3:#6E7688;
+      --line:#252C3C; --line-strong:#333C50;
+      --brand:#25D6C2; --brand-ink:#25D6C2; --brand-soft:#0E2E2C;
+      --warm:#FF7D6E; --warm-soft:#2E1613; --gold:#F0BC5E;
+      --m-low:#F47C68; --m-mid:#F5BE55; --m-high:#26D2AE;
+      --grid: rgba(255,255,255,0.05);
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper:#EEF1F7; --surface:#FFFFFF; --surface-2:#F4F6FB;
+    --ink:#141826; --ink-2:#4A5266; --ink-3:#828BA0;
+    --line:#E1E6F0; --line-strong:#CED5E4;
+    --brand:#0FB5A6; --brand-ink:#0B857A; --brand-soft:#DBF3F0;
+    --warm:#FF6B5B; --warm-soft:#FFE6E2; --gold:#E8A93C;
+    --m-low:#F0705A; --m-mid:#F2B33D; --m-high:#17BE9C;
+    --grid: rgba(20,24,38,0.045);
+    --shadow: 0 1px 2px rgba(20,24,38,.05), 0 8px 24px rgba(20,24,38,.06);
+  }
+  :root[data-theme="dark"] {
+    --paper:#0B0E15; --surface:#141926; --surface-2:#1A2030;
+    --ink:#EAEDF5; --ink-2:#A7AFC2; --ink-3:#6E7688;
+    --line:#252C3C; --line-strong:#333C50;
+    --brand:#25D6C2; --brand-ink:#25D6C2; --brand-soft:#0E2E2C;
+    --warm:#FF7D6E; --warm-soft:#2E1613; --gold:#F0BC5E;
+    --m-low:#F47C68; --m-mid:#F5BE55; --m-high:#26D2AE;
+    --grid: rgba(255,255,255,0.05);
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing:border-box; }
+  body {
+    margin:0; font-family:var(--font-body); color:var(--ink);
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:26px 26px;
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  h1,h2,h3 { font-family:var(--font-display); letter-spacing:-.01em; }
+  .wrap { max-width:1140px; margin:0 auto; padding:14px clamp(14px,3vw,28px) 48px; }
+  [hidden]{ display:none !important; }
+
+  /* Demo navigator */
+  .demo-nav{ position:sticky; top:0; z-index:20; background:color-mix(in srgb,var(--paper) 86%, transparent);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+  .demo-nav .in{ max-width:1140px; margin:0 auto; padding:8px clamp(14px,3vw,28px); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .demo-nav .lbl{ font-size:10.5px; text-transform:uppercase; letter-spacing:.09em; color:var(--ink-3); margin-right:2px; }
+  .demo-nav button{ font-family:var(--font-body); font-size:12.5px; font-weight:600; color:var(--ink-2); background:transparent;
+    border:1px solid transparent; border-radius:8px; padding:5px 10px; cursor:pointer; }
+  .demo-nav button:hover{ color:var(--ink); background:var(--surface-2); }
+  .demo-nav button.active{ color:var(--brand-ink); background:var(--brand-soft); }
+  .demo-nav button:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
+
+  /* Brand — logo infinito (∞ → toro, guiño topológico) */
+  .mark { width:38px; height:38px; border-radius:11px; background:linear-gradient(145deg,var(--brand),#0a8f83);
+          display:grid; place-items:center; box-shadow:var(--shadow); flex:none; }
+  .mark svg { width:24px; height:24px; }
+  .mark.sm{ width:30px; height:30px; border-radius:9px; } .mark.sm svg{ width:19px; height:19px; }
+  .mark.lg{ width:54px; height:54px; border-radius:15px; } .mark.lg svg{ width:34px; height:34px; }
+  .mark.hero{ width:72px; height:72px; border-radius:20px; } .mark.hero svg{ width:46px; height:46px; }
+  .mark.hero .inf{ stroke-dasharray:70; stroke-dashoffset:70; animation:draw 2.2s ease forwards .3s; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  .brand { display:flex; align-items:center; gap:11px; }
+  .brand h1 { font-size:20px; margin:0; font-weight:700; }
+  .brand .tag { font-size:11.5px; color:var(--ink-3); margin-top:1px; }
+
+  .topbar { display:flex; align-items:center; gap:12px; padding:16px 0 20px; flex-wrap:wrap; }
+  .spacer { flex:1; }
+  .who { display:flex; align-items:center; gap:9px; font-size:13.5px; color:var(--ink-2); }
+  .avatar { width:30px; height:30px; border-radius:50%; background:var(--brand-soft); color:var(--brand-ink);
+            display:grid; place-items:center; font-weight:700; font-family:var(--font-display); font-size:13px; }
+  .rolepill{ font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line); white-space:nowrap; }
+  .lang{ font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--surface-2); color:var(--ink-3); border:1px solid var(--line); cursor:default; }
+  .link{ background:none; border:none; color:var(--ink-3); font-family:var(--font-body); font-size:13px; cursor:pointer; text-decoration:underline; padding:0; }
+  .link:hover{ color:var(--brand-ink); }
+
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
+  .card-h { display:flex; align-items:center; gap:10px; padding:16px 18px 0; flex-wrap:wrap; }
+  .card-h h2 { font-size:15px; margin:0; font-weight:700; }
+  .card-h .sub { font-size:12px; color:var(--ink-3); }
+
+  .btn { font-family:var(--font-display); font-weight:700; font-size:14px; border-radius:11px; padding:11px 16px; cursor:pointer;
+         border:1.5px solid var(--line); background:var(--surface); color:var(--ink); transition:.15s; }
+  .btn:hover{ border-color:var(--brand); color:var(--brand-ink); }
+  .btn:focus-visible{ outline:3px solid var(--brand); outline-offset:2px; }
+  .btn.primary{ background:var(--brand); border-color:var(--brand); color:#04322e; }
+  .btn.primary:hover{ filter:brightness(1.05); color:#04322e; }
+  .btn.block{ width:100%; text-align:center; }
+  .btn.sm{ font-size:12.5px; padding:7px 12px; }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .chip { font-size:11.5px; font-weight:600; padding:4px 10px; border-radius:999px; background:var(--surface-2);
+          color:var(--ink-2); border:1px solid var(--line); }
+  .chip.brand { background:var(--brand-soft); color:var(--brand-ink); border-color:transparent; }
+  .chip.warm { background:var(--warm-soft); color:var(--warm); border-color:transparent; }
+  .chip.gold { background:color-mix(in srgb,var(--gold) 18%, var(--surface)); color:var(--gold); border-color:transparent; }
+  .chip.p2 { font-size:10px; text-transform:uppercase; letter-spacing:.06em; }
+
+  /* ===== LANDING ===== */
+  .hero{ text-align:center; padding:34px 0 8px; }
+  .hero .badge{ display:inline-block; font-size:12px; font-weight:600; color:var(--brand-ink); background:var(--brand-soft);
+    border-radius:999px; padding:6px 14px; margin:18px 0; }
+  .hero h1{ font-size:clamp(30px,6vw,50px); line-height:1.05; margin:0 auto 16px; max-width:16ch; text-wrap:balance; font-weight:700; }
+  .hero h1 em{ font-style:normal; color:var(--brand-ink); }
+  .hero p{ font-size:clamp(15px,2.4vw,18px); color:var(--ink-2); max-width:56ch; margin:0 auto 26px; }
+  .hero .cta{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:40px 0 10px; }
+  @media (max-width:760px){ .steps{ grid-template-columns:1fr; } }
+  .step-c{ padding:20px; }
+  .step-c .n{ font-family:var(--font-mono); font-size:12px; color:var(--brand-ink); font-weight:700; }
+  .step-c h3{ font-size:16px; margin:8px 0 6px; }
+  .step-c p{ font-size:13.5px; color:var(--ink-2); margin:0; }
+  .lines{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:18px; }
+  @media (max-width:760px){ .lines{ grid-template-columns:1fr; } }
+  .line-c{ padding:20px; }
+  .line-c h3{ font-size:15px; margin:0 0 6px; display:flex; align-items:center; gap:8px; }
+  .line-c p{ font-size:13px; color:var(--ink-2); margin:0 0 10px; }
+  .roles-teaser{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:18px; }
+  @media (max-width:760px){ .roles-teaser{ grid-template-columns:1fr; } }
+  .rt{ display:flex; gap:12px; align-items:flex-start; padding:16px; }
+  .rt .ic{ font-size:22px; } .rt h3{ font-size:14px; margin:0 0 3px; } .rt p{ font-size:12.5px; color:var(--ink-2); margin:0; }
+
+  /* ===== LOGIN ===== */
+  .auth{ min-height:70vh; display:grid; place-items:center; padding:30px 0; }
+  .auth .box{ width:100%; max-width:410px; padding:28px; }
+  .auth .center{ text-align:center; margin-bottom:20px; }
+  .auth h2{ font-size:21px; margin:14px 0 4px; }
+  .auth .center p{ font-size:13.5px; color:var(--ink-3); margin:0; }
+  .roletabs{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:12px; padding:5px; margin-bottom:18px; }
+  .roletabs button{ font-family:var(--font-display); font-weight:700; font-size:12.5px; color:var(--ink-2); background:transparent;
+    border:none; border-radius:8px; padding:9px 4px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .roletabs button .ic{ font-size:16px; }
+  .roletabs button.active{ background:var(--surface); color:var(--brand-ink); box-shadow:var(--shadow); }
+  .field{ margin-bottom:13px; }
+  .field label{ display:block; font-size:12px; font-weight:600; color:var(--ink-2); margin-bottom:5px; }
+  .field input{ width:100%; font-family:var(--font-body); font-size:14.5px; color:var(--ink); background:var(--surface-2);
+    border:1.5px solid var(--line); border-radius:10px; padding:11px 13px; }
+  .field input:focus{ outline:none; border-color:var(--brand); background:var(--surface); }
+  .auth .role-desc{ font-size:12.5px; color:var(--ink-3); text-align:center; margin:14px 0 0; }
+  .auth .alt{ text-align:center; font-size:13px; color:var(--ink-3); margin-top:14px; display:flex; flex-direction:column; gap:6px; }
+  .auth .ok-msg{ background:var(--brand-soft); color:var(--brand-ink); border-radius:10px; padding:12px 14px; font-size:13.5px; text-align:center; margin-bottom:12px; }
+
+  /* ===== stat strip ===== */
+  .strip { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:20px; }
+  .strip.c4{ grid-template-columns:repeat(4,1fr); }
+  .stat { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px; box-shadow:var(--shadow); }
+  .stat .k { font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-3); }
+  .stat .v { font-family:var(--font-display); font-size:21px; font-weight:700; margin-top:3px; font-variant-numeric:tabular-nums; }
+  .stat .v small { font-size:13px; color:var(--ink-3); font-weight:600; }
+  .stat .v.warn{ color:var(--warm); } .stat .v.gold{ color:var(--gold); }
+  @media (max-width:720px){ .strip, .strip.c4{ grid-template-columns:repeat(2,1fr);} }
+
+  /* ===== CURSO (recorrido) ===== */
+  .course-head{ padding:20px; display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:18px; }
+  .course-head .info{ flex:1; min-width:220px; }
+  .course-head h2{ font-size:20px; margin:0 0 4px; }
+  .course-head .meta{ font-size:12.5px; color:var(--ink-3); display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .progress{ height:8px; border-radius:99px; background:var(--surface-2); border:1px solid var(--line); overflow:hidden; }
+  .progress > i{ display:block; height:100%; background:var(--brand); width:0; transition:width .5s; }
+  .course-head .pr{ min-width:180px; }
+  .course-head .pr .pct{ font-family:var(--font-mono); font-size:12px; color:var(--ink-2); margin-top:5px; }
+  .badges-row{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+
+  .tema{ margin-bottom:16px; }
+  .tema .t-head{ display:flex; align-items:center; gap:10px; padding:15px 18px 4px; }
+  .tema .t-head h3{ font-size:15.5px; margin:0; }
+  .tema .t-head .tn{ font-family:var(--font-mono); font-size:11px; color:var(--brand-ink); font-weight:700; }
+  .tema .t-body{ padding:8px 18px 16px; }
+  .sub-row{ display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px dashed var(--line); }
+  .sub-row:last-child{ border-bottom:none; }
+  .sub-row .st-ic{ width:26px; height:26px; border-radius:50%; display:grid; place-items:center; font-size:13px; flex:none;
+    background:var(--surface-2); border:1.5px solid var(--line); }
+  .sub-row.done .st-ic{ background:var(--m-high); border-color:var(--m-high); color:#fff; }
+  .sub-row.doing .st-ic{ background:var(--brand-soft); border-color:var(--brand); color:var(--brand-ink); }
+  .sub-row .nm{ flex:1; min-width:130px; }
+  .sub-row .nm b{ font-size:13.5px; display:block; }
+  .sub-row .nm small{ font-size:11.5px; color:var(--ink-3); }
+  .sub-row .mini{ width:110px; }
+  .sub-row .mini .pct{ font-family:var(--font-mono); font-size:11px; color:var(--ink-3); text-align:right; }
+  .sub-row.activity{ background:var(--surface-2); border-radius:12px; padding:12px; margin-top:8px; border:1px dashed var(--line-strong); }
+  .sub-row.activity .st-ic{ background:color-mix(in srgb,var(--gold) 20%, var(--surface)); border-color:var(--gold); }
+
+  /* ===== diagnostic / practice shared ===== */
+  .grid { display:grid; grid-template-columns:1.35fr 1fr; gap:18px; align-items:start; }
+  @media (max-width:880px){ .grid{ grid-template-columns:1fr; } }
+  .ex-body { padding:16px 18px 20px; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; align-items:center; }
+  .diff { display:inline-flex; gap:3px; align-items:center; }
+  .diff i { width:6px; height:6px; border-radius:50%; background:var(--line-strong); display:inline-block; }
+  .diff i.on { background:var(--brand); }
+  .prompt { font-family:var(--font-display); font-size:clamp(20px,3.6vw,27px); font-weight:700; letter-spacing:-.015em; margin:6px 0 20px; text-wrap:balance; }
+  .frac{ display:inline-flex; flex-direction:column; text-align:center; vertical-align:middle; margin:0 .12em; line-height:1.05; }
+  .frac span:first-child{ border-bottom:2.5px solid currentColor; padding:0 .18em; }
+  .opts { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+  @media (max-width:520px){ .opts{ grid-template-columns:1fr; } }
+  .opt { font-family:var(--font-body); font-size:14.5px; font-weight:600; text-align:left; cursor:pointer;
+         background:var(--surface-2); border:1.5px solid var(--line); border-radius:13px; padding:13px 15px; color:var(--ink);
+         transition:border-color .15s, background .15s, transform .1s; display:flex; align-items:center; gap:10px; }
+  .opt:hover:not(:disabled){ border-color:var(--brand); transform:translateY(-1px); }
+  .opt:focus-visible{ outline:3px solid var(--brand); outline-offset:2px; }
+  .opt .badge{ width:24px; height:24px; border-radius:7px; background:var(--surface); border:1px solid var(--line);
+               display:grid; place-items:center; font-size:12px; color:var(--ink-3); flex:none; }
+  .opt:disabled{ cursor:default; }
+  .opt.correct{ border-color:var(--m-high); background:color-mix(in srgb, var(--m-high) 14%, var(--surface)); }
+  .opt.correct .badge{ background:var(--m-high); color:#fff; border-color:transparent; }
+  .opt.wrong{ border-color:var(--m-low); background:color-mix(in srgb, var(--m-low) 12%, var(--surface)); }
+  .opt.wrong .badge{ background:var(--m-low); color:#fff; border-color:transparent; }
+  .opt.dim{ opacity:.55; }
+  .ex-foot { display:flex; align-items:center; gap:12px; margin-top:18px; flex-wrap:wrap; }
+  .feedback { font-size:14px; font-weight:600; margin-left:auto; }
+  .feedback.ok{ color:var(--m-high); } .feedback.no{ color:var(--m-low); }
+  .hint { margin-top:16px; border-left:3px solid var(--brand); background:var(--brand-soft);
+          border-radius:0 12px 12px 0; padding:13px 15px; font-size:14px; color:var(--ink); display:flex; gap:10px; }
+  .hint b{ color:var(--brand-ink); font-family:var(--font-display); }
+  .hint .ai{ font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:var(--brand-ink);
+             border:1px solid var(--brand); border-radius:6px; padding:2px 6px; align-self:flex-start; white-space:nowrap; }
+
+  .panel-body{ padding:14px 18px 18px; }
+  .mrow{ margin-bottom:13px; } .mrow:last-child{ margin-bottom:2px; }
+  .mrow .top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  .mrow .name{ font-size:13px; font-weight:600; color:var(--ink); }
+  .mrow .pct{ font-family:var(--font-mono); font-size:12px; color:var(--ink-2); font-variant-numeric:tabular-nums; }
+  .bar{ height:9px; border-radius:99px; background:var(--surface-2); overflow:hidden; border:1px solid var(--line); }
+  .bar > i{ display:block; height:100%; border-radius:99px; width:0; transition:width .7s cubic-bezier(.2,.8,.2,1), background .4s; }
+  .mrow.focus .name::after{ content:"foco"; font-size:10px; text-transform:uppercase; letter-spacing:.06em;
+      color:var(--warm); border:1px solid var(--warm); border-radius:5px; padding:1px 5px; margin-left:8px; vertical-align:middle; }
+  .legend{ display:flex; gap:14px; margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); font-size:11.5px; color:var(--ink-3); flex-wrap:wrap; }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; } .legend i{ width:9px; height:9px; border-radius:50%; }
+
+  .route{ padding:6px 18px 18px; max-height:300px; overflow-y:auto; }
+  .step{ position:relative; padding:11px 0 11px 26px; border-left:2px solid var(--line); }
+  .step:last-child{ border-left-color:transparent; }
+  .step::before{ content:""; position:absolute; left:-7px; top:14px; width:12px; height:12px; border-radius:50%;
+                 background:var(--surface); border:2.5px solid var(--brand); }
+  .step.ok::before{ border-color:var(--m-high); } .step.no::before{ border-color:var(--m-low); }
+  .step .h{ display:flex; align-items:center; gap:8px; }
+  .step .res{ font-size:11px; font-weight:700; } .step.ok .res{ color:var(--m-high); } .step.no .res{ color:var(--m-low); }
+  .step .st{ font-size:13px; font-weight:600; }
+  .step .why{ font-size:12.5px; color:var(--ink-2); margin-top:3px; }
+  .step .delta{ font-family:var(--font-mono); font-size:11px; color:var(--ink-3); margin-top:3px; font-variant-numeric:tabular-nums; }
+  .route .empty{ font-size:13px; color:var(--ink-3); padding:14px 0 6px; }
+  .anim-in{ animation:slidein .45s cubic-bezier(.2,.8,.2,1); }
+  @keyframes slidein{ from{ opacity:0; transform:translateY(-6px);} to{ opacity:1; transform:none;} }
+
+  /* ===== diagnostic ===== */
+  .diag{ max-width:640px; margin:0 auto; }
+
+  /* ===== CHAT tutor ===== */
+  .chat{ margin-top:18px; }
+  .chat-log{ padding:14px 18px; max-height:340px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
+  .msg{ max-width:88%; padding:10px 13px; border-radius:14px; font-size:13.5px; line-height:1.5; }
+  .msg.tutor{ background:var(--surface-2); border:1px solid var(--line); align-self:flex-start; border-bottom-left-radius:4px; }
+  .msg.me{ background:var(--brand-soft); color:var(--ink); align-self:flex-end; border-bottom-right-radius:4px; }
+  .msg .who{ font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:var(--brand-ink); font-weight:700; margin-bottom:3px; }
+  .msg .bookref{ margin-top:8px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:9px 11px;
+    font-size:12.5px; display:flex; gap:8px; align-items:flex-start; }
+  .msg .bookref b{ display:block; }
+  .msg .bookref small{ color:var(--ink-3); }
+  .msg .math{ font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:15.5px; text-align:center;
+    background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-top:8px; }
+  .msg .graph{ margin-top:8px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px 10px 6px; }
+  .msg .graph small{ display:block; color:var(--ink-3); font-size:11px; margin-top:4px; text-align:center; }
+  .chat-chips{ display:flex; gap:8px; flex-wrap:wrap; padding:0 18px 10px; }
+  .chat-chips button{ font-family:var(--font-body); font-size:12px; font-weight:600; color:var(--brand-ink); background:var(--brand-soft);
+    border:none; border-radius:999px; padding:6px 12px; cursor:pointer; }
+  .chat-chips button:hover{ filter:brightness(.97); }
+  .chat-chips button.buzon{ background:var(--surface-2); color:var(--ink-2); border:1px dashed var(--line-strong); }
+  .chat-in{ display:flex; gap:8px; padding:0 18px 16px; }
+  .chat-in input{ flex:1; font-family:var(--font-body); font-size:14px; color:var(--ink); background:var(--surface-2);
+    border:1.5px solid var(--line); border-radius:11px; padding:10px 13px; }
+  .chat-in input:focus{ outline:none; border-color:var(--brand); }
+
+  /* ===== tables / teacher / admin ===== */
+  .section-h{ display:flex; align-items:center; gap:12px; margin:6px 0 16px; flex-wrap:wrap; }
+  .section-h h2{ font-size:20px; margin:0; } .section-h .sub{ font-size:13px; color:var(--ink-3); }
+  .tbl-wrap{ overflow-x:auto; }
+  table{ border-collapse:collapse; width:100%; font-size:13px; }
+  th,td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); font-weight:700; }
+  td .who2{ display:flex; align-items:center; gap:9px; } td .av, .risk .av{ width:26px; height:26px; border-radius:50%; background:var(--surface-2);
+    display:grid; place-items:center; font-size:11px; font-weight:700; font-family:var(--font-display); color:var(--ink-2); }
+  .cell{ display:inline-block; min-width:42px; text-align:center; font-family:var(--font-mono); font-variant-numeric:tabular-nums;
+    font-size:12px; font-weight:600; padding:4px 8px; border-radius:7px; }
+  .badge-role{ font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; }
+  .b-est{ background:var(--brand-soft); color:var(--brand-ink); }
+  .b-prof{ background:var(--warm-soft); color:var(--warm); }
+  .b-adm{ background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line); }
+  .tag-ok{ color:var(--m-high); font-weight:700; } .tag-warn{ color:var(--warm); font-weight:700; }
+  .two-col{ display:grid; grid-template-columns:1.4fr 1fr; gap:18px; align-items:start; }
+  @media (max-width:880px){ .two-col{ grid-template-columns:1fr; } }
+  .risk{ padding:12px 16px; }
+  .risk .item{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px dashed var(--line); }
+  .risk .item:last-child{ border-bottom:none; }
+  .risk .item .txt{ flex:1; } .risk .item .txt b{ font-size:13px; } .risk .item .txt small{ display:block; color:var(--ink-3); font-size:12px; }
+
+  .course-cards{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:720px){ .course-cards{ grid-template-columns:1fr; } }
+  .ccard{ padding:16px; }
+  .ccard h3{ font-size:14.5px; margin:0 0 4px; }
+  .ccard .meta{ font-size:12px; color:var(--ink-3); margin-bottom:10px; }
+  .form-grid{ display:grid; gap:12px; padding:4px 18px 18px; }
+  .xlsx-drop{ border:2px dashed var(--line-strong); border-radius:13px; padding:22px; text-align:center; color:var(--ink-3);
+    font-size:13px; cursor:pointer; transition:.15s; }
+  .xlsx-drop:hover{ border-color:var(--brand); color:var(--brand-ink); }
+
+  /* toast + modal */
+  .toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); z-index:60;
+    background:var(--ink); color:var(--paper); font-size:13.5px; font-weight:600; padding:11px 18px; border-radius:12px;
+    box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:.3s; max-width:90vw; text-align:center; }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .modal-bg{ position:fixed; inset:0; background:rgba(10,12,20,.55); z-index:50; display:grid; place-items:center; padding:20px; }
+  .slide{ width:min(720px, 94vw); aspect-ratio:16/10; background:var(--surface); border-radius:16px; box-shadow:var(--shadow);
+    display:flex; flex-direction:column; padding:clamp(20px,4vw,44px); position:relative; }
+  .slide .s-head{ font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--brand-ink); font-weight:700; }
+  .slide h2{ font-size:clamp(22px,4vw,34px); margin:10px 0 14px; }
+  .slide .s-body{ font-size:clamp(14px,2.2vw,18px); color:var(--ink-2); white-space:pre-line; flex:1; }
+  .slide .s-foot{ display:flex; align-items:center; gap:10px; }
+  .slide .s-foot .cnt{ font-family:var(--font-mono); font-size:12px; color:var(--ink-3); margin-left:auto; }
+  .slide .close-x{ position:absolute; top:12px; right:14px; }
+
+  /* ===== evaluación ===== */
+  .etabs{ display:flex; gap:6px; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:5px; width:max-content; margin-bottom:16px; flex-wrap:wrap; }
+  .etabs button{ font-family:var(--font-display); font-weight:700; font-size:13px; color:var(--ink-2); background:transparent; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; }
+  .etabs button.active{ background:var(--surface); color:var(--brand-ink); box-shadow:var(--shadow); }
+  .check-list{ display:grid; gap:8px; padding:4px 0; }
+  .check{ display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--ink-2); }
+  .check .dot{ width:22px; height:22px; border-radius:50%; display:grid; place-items:center; font-size:12px; background:var(--surface-2); border:1.5px solid var(--line); flex:none; }
+  .check.ok .dot{ background:var(--m-high); border-color:var(--m-high); color:#fff; }
+  .check.run .dot{ border-color:var(--brand); animation:pulse 1s infinite; }
+  @keyframes pulse{ 50%{ box-shadow:0 0 0 5px color-mix(in srgb,var(--brand) 25%, transparent);} }
+  .cam{ aspect-ratio:4/3; max-height:190px; width:100%; background:linear-gradient(145deg,#1a2030,#0b0e15); border-radius:12px; display:grid; place-items:center; color:#8ea0b5; font-size:13px; text-align:center; border:1px solid var(--line-strong); }
+
+  /* ===== avatar ===== */
+  .stage{ display:grid; grid-template-columns:1.5fr 1fr; gap:18px; align-items:start; }
+  @media(max-width:880px){ .stage{ grid-template-columns:1fr; } }
+  .board{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; position:relative; min-height:330px; }
+  .board .bb{ background:#173B34; border-radius:12px; color:#EAF7F2; padding:18px 18px 26px; min-height:170px; font-size:15px; line-height:1.6; }
+  .board .bb .chalk-math{ font-family:Georgia,serif; font-style:italic; font-size:18px; display:block; margin-top:10px; }
+  .avatarguy{ position:absolute; top:150px; right:26px; font-size:54px; animation:bob 3s ease-in-out infinite; filter:drop-shadow(0 4px 8px rgba(0,0,0,.25)); }
+  @keyframes bob{ 0%,100%{ transform:translateY(0) rotate(-2deg);} 50%{ transform:translateY(-6px) rotate(2deg);} }
+  .bubble{ background:var(--surface-2); border:1px solid var(--line); border-radius:14px; border-bottom-right-radius:4px; padding:12px 14px; font-size:14px; margin-top:14px; min-height:64px; }
+  .buzon-list{ padding:6px 18px 16px; display:grid; gap:8px; }
+  .buzon-item{ background:var(--surface-2); border:1px dashed var(--line-strong); border-radius:10px; padding:9px 12px; font-size:13px; }
+
+  /* rayar sobre diapositiva */
+  .slide canvas{ position:absolute; inset:0; width:100%; height:100%; border-radius:16px; cursor:crosshair; display:none; }
+  .slide.rayando canvas{ display:block; }
+
+  .foot-note{ text-align:center; color:var(--ink-3); font-size:12px; margin-top:26px; }
+  .foot-note b{ color:var(--brand-ink); }
+
+  .eval-bars{ padding:6px 18px 16px; }
+  .eval-bars .er{ display:flex; align-items:center; gap:10px; padding:8px 0; }
+  .eval-bars .er .nm{ width:110px; font-size:13px; font-weight:600; }
+  .eval-bars .er .bar{ flex:1; }
+  .eval-bars .er .sc{ font-family:var(--font-mono); font-size:12.5px; width:52px; text-align:right; }
+
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; animation:none !important; } }
+</style>
+
+<!-- DEMO NAVIGATOR -->
+<nav class="demo-nav" aria-label="Navegación del prototipo">
+  <div class="in">
+    <span class="lbl">Prototipo v2 · ver</span>
+    <button data-go="landing" class="active">Bienvenida</button>
+    <button data-go="login">Inicio de sesión</button>
+    <button data-go="curso">Mi curso</button>
+    <button data-go="diagnostico">Diagnóstico</button>
+    <button data-go="practica">Práctica + Tutor</button>
+    <button data-go="evaluacion">Evaluación</button>
+    <button data-go="avatar">Avatar tutor</button>
+    <button data-go="docente">Panel docente</button>
+    <button data-go="admin">Administrador</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ===================== LANDING ===================== -->
+  <section class="view" data-view="landing">
+    <div class="topbar">
+      <div class="brand">
+        <div class="mark" data-mark></div>
+        <div><h1>GuIA</h1><div class="tag">Plataforma de cursos adaptativos con IA</div></div>
+      </div>
+      <div class="spacer"></div>
+      <span class="lang" title="Inglés disponible próximamente">🌐 ES · EN pronto</span>
+      <button class="btn" data-go="login">Iniciar sesión</button>
+    </div>
+
+    <div class="hero">
+      <div class="mark hero" style="margin:0 auto" data-mark-hero></div>
+      <div><span class="badge">Hackathon Código Facilito · Kiro + AWS</span></div>
+      <h1>Cursos que se adaptan a <em>cada</em> estudiante</h1>
+      <p>GuIA construye una ruta de aprendizaje que cambia en tiempo real con cada respuesta, y un tutor IA que explica con ejemplos y te dice <b>en qué libro, capítulo y página</b> profundizar. Empezamos con <b>Estadística</b>.</p>
+      <div class="cta">
+        <button class="btn primary" data-go="curso">Explorar curso de Estadística</button>
+        <button class="btn" data-go="diagnostico">Hacer el diagnóstico</button>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="card step-c"><div class="n">01</div><h3>Diagnóstico por niveles</h3><p>Preguntas de nivel básico, intermedio y avanzado estiman tu punto de partida real.</p></div>
+      <div class="card step-c"><div class="n">02</div><h3>Ruta que se adapta</h3><p>El motor recalcula tu dominio tras cada respuesta y elige el siguiente reto ideal. Cada subtema registra tu avance.</p></div>
+      <div class="card step-c"><div class="n">03</div><h3>Tutor IA con bibliografía</h3><p>Pregunta lo que quieras: ejemplos, explicaciones y referencias exactas a libros (capítulo y página).</p></div>
+    </div>
+
+    <div class="lines">
+      <div class="card line-c">
+        <h3>🌎 Cursos públicos</h3>
+        <p>Abiertos a cualquier persona. Aprende a tu ritmo con la ruta adaptativa y el tutor IA.</p>
+        <span class="chip brand">Estadística — disponible</span>
+        <span class="chip">Álgebra básica — pronto</span>
+      </div>
+      <div class="card line-c">
+        <h3>🏛️ Cursos universitarios</h3>
+        <p>Para docentes con cursos contratados: temario institucional, matrícula por listado (XLSX), seguimiento e informes. <b>No son públicos</b>: solo accede quien está en el listado de la universidad.</p>
+        <span class="chip warm">Politécnico JIC · UdeA</span>
+        <span class="chip">🔒 Privado · solo matriculados</span>
+      </div>
+    </div>
+
+    <div class="roles-teaser">
+      <div class="card rt"><div class="ic">🎓</div><div><h3>Estudiante</h3><p>Ruta personalizada, tutor IA, gamificación: rachas, puntos, insignias y niveles.</p></div></div>
+      <div class="card rt"><div class="ic">🧑‍🏫</div><div><h3>Profesor</h3><p>Crea cursos (públicos o a la medida), matricula por XLSX, presenta clases y ve el dominio del grupo.</p></div></div>
+      <div class="card rt"><div class="ic">⚙️</div><div><h3>Administrador</h3><p>Usuarios, contenido, uso de la plataforma y evaluación de los cursos.</p></div></div>
+    </div>
+  </section>
+
+  <!-- ===================== LOGIN ===================== -->
+  <section class="view" data-view="login" hidden>
+    <div class="auth">
+      <div class="card box">
+
+        <!-- estado: login -->
+        <div id="auth-login">
+          <div class="center">
+            <div class="mark lg" style="margin:0 auto" data-mark></div>
+            <h2>Inicia sesión en GuIA</h2>
+            <p>Elige tu rol para continuar</p>
+          </div>
+          <div class="roletabs" id="roletabs" role="tablist">
+            <button data-role="est" class="active" role="tab"><span class="ic">🎓</span>Estudiante</button>
+            <button data-role="prof" role="tab"><span class="ic">🧑‍🏫</span>Profesor</button>
+            <button data-role="adm" role="tab"><span class="ic">⚙️</span>Administrador</button>
+          </div>
+          <div class="field"><label>Correo</label><input type="email" value="sofia@correo.com" autocomplete="username"></div>
+          <div class="field"><label>Contraseña</label><input type="password" value="••••••••" autocomplete="current-password"></div>
+          <button class="btn primary block" id="btn-login">Entrar</button>
+          <p class="role-desc" id="role-desc">Entrarás a tu curso y tu ruta de aprendizaje personalizada.</p>
+          <div class="alt">
+            <button class="link" data-auth="forgot">¿Olvidaste tu contraseña?</button>
+            <button class="link" data-auth="first">¿Tu universidad te matriculó? Crea tu contraseña aquí</button>
+            <span>¿No tienes cuenta? <button class="link">Crear cuenta</button></span>
+          </div>
+        </div>
+
+        <!-- estado: recuperación -->
+        <div id="auth-forgot" hidden>
+          <div class="center">
+            <div class="mark lg" style="margin:0 auto" data-mark></div>
+            <h2>Recuperar contraseña</h2>
+            <p>Te enviaremos un enlace de recuperación</p>
+          </div>
+          <div id="forgot-form">
+            <div class="field"><label>Correo registrado</label><input type="email" placeholder="tu@correo.com"></div>
+            <button class="btn primary block" id="btn-forgot">Enviar enlace</button>
+          </div>
+          <div id="forgot-ok" class="ok-msg" hidden>✉️ ¡Listo! Revisa tu correo: te enviamos el enlace para restablecer tu contraseña.</div>
+          <div class="alt"><button class="link" data-auth="login">← Volver a iniciar sesión</button></div>
+        </div>
+
+        <!-- estado: primer ingreso (matrícula universitaria) -->
+        <div id="auth-first" hidden>
+          <div class="center">
+            <div class="mark lg" style="margin:0 auto" data-mark></div>
+            <h2>Primer ingreso</h2>
+            <p>Tu universidad te matriculó y te notificamos por correo. Crea tu contraseña para empezar.</p>
+          </div>
+          <div id="first-form">
+            <div class="field"><label>Correo institucional</label><input type="email" placeholder="tu@elpoli.edu.co"></div>
+            <div class="field"><label>Código recibido por correo</label><input type="text" placeholder="ej. 493-201"></div>
+            <div class="field"><label>Crea tu contraseña</label><input type="password" placeholder="mínimo 8 caracteres"></div>
+            <button class="btn primary block" id="btn-first">Crear contraseña y entrar</button>
+          </div>
+          <div id="first-ok" class="ok-msg" hidden>✅ ¡Cuenta activada! Ya tienes acceso al curso <b>Estadística — Politécnico JIC</b>.</div>
+          <div class="alt"><button class="link" data-auth="login">← Volver a iniciar sesión</button></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CURSO (recorrido) ===================== -->
+  <section class="view" data-view="curso" hidden>
+    <div class="topbar">
+      <div class="brand"><div class="mark sm" data-mark></div><div><h1 style="font-size:16px">GuIA</h1></div></div>
+      <div class="spacer"></div>
+      <span class="rolepill">🎓 Estudiante</span>
+      <div class="who"><span>Sofía</span><div class="avatar">SO</div></div>
+      <button class="link" data-go="landing">Salir</button>
+    </div>
+
+    <div class="card course-head">
+      <div class="info">
+        <h2>Estadística — CBS00074</h2>
+        <div class="meta">
+          <span class="chip warm">Politécnico JIC · 🔒 privado</span>
+          <span class="chip">4 créditos</span>
+          <span>6 unidades (programa oficial FD-GC70) · 8 subtemas · 6 actividades</span>
+        </div>
+      </div>
+      <div class="pr">
+        <div class="progress"><i id="course-prog"></i></div>
+        <div class="pct"><span id="course-pct">0%</span> completado · cada ítem registra tu avance</div>
+      </div>
+      <button class="btn primary" data-go="practica">Continuar donde ibas →</button>
+    </div>
+
+    <div class="badges-row" id="badges-row">
+      <span class="chip gold">🏅 Nivel <b id="b-level">1</b></span>
+      <span class="chip gold">⭐ <b id="b-xp">0</b> pts</span>
+      <span class="chip">🔥 Racha: <b id="b-streak">0</b></span>
+      <span class="chip" id="b-insignias">🎖️ Insignias: —</span>
+    </div>
+
+    <div id="temas"></div>
+  </section>
+
+  <!-- ===================== DIAGNÓSTICO ===================== -->
+  <section class="view" data-view="diagnostico" hidden>
+    <div class="topbar">
+      <div class="brand"><div class="mark sm" data-mark></div><div><h1 style="font-size:16px">GuIA</h1></div></div>
+      <div class="spacer"></div>
+      <span class="chip brand">Diagnóstico · Estadística</span>
+    </div>
+    <div class="diag">
+      <div id="diag-intro" class="card" style="padding:26px; text-align:center">
+        <h2 style="font-size:22px; margin:0 0 8px">Veamos tu punto de partida</h2>
+        <p style="color:var(--ink-2); font-size:14.5px; max-width:46ch; margin:0 auto 20px">
+          Antes de tu ruta, te haré <b>6 preguntas de Estadística</b> — de nivel <span class="chip">Básico</span> <span class="chip">Intermedio</span> <span class="chip">Avanzado</span> — para saber exactamente por dónde empezar contigo. No te preocupes por fallar.</p>
+        <button class="btn primary" id="diag-start">Empezar diagnóstico</button>
+      </div>
+
+      <div id="diag-q" class="card" hidden style="padding:22px">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:12.5px; color:var(--ink-3); flex-wrap:wrap; gap:6px">
+          <span id="diag-count">Pregunta 1 de 6</span>
+          <span style="display:flex; gap:6px; align-items:center"><span class="chip" id="diag-level">Básico</span><span id="diag-sub"></span></span>
+        </div>
+        <div class="progress" style="margin:14px 0 22px"><i id="diag-prog"></i></div>
+        <div class="prompt" id="diag-prompt"></div>
+        <div class="opts" id="diag-opts"></div>
+      </div>
+
+      <div id="diag-done" class="card" hidden style="padding:26px; text-align:center">
+        <div style="font-size:34px">🎯</div>
+        <h2 style="font-size:22px; margin:8px 0 6px">¡Listo, Sofía!</h2>
+        <p style="color:var(--ink-2); font-size:14px; max-width:44ch; margin:0 auto 18px">Este es tu mapa de dominio inicial en Estadística. Desde aquí construyo tu ruta personalizada.</p>
+        <div id="diag-map" style="text-align:left; max-width:420px; margin:0 auto 20px"></div>
+        <button class="btn primary" data-go="curso">Ver mi curso →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PRÁCCTICA + TUTOR ===================== -->
+  <section class="view" data-view="practica" hidden>
+    <div class="topbar">
+      <div class="brand"><div class="mark sm" data-mark></div><div><h1 style="font-size:16px">GuIA</h1></div></div>
+      <div class="spacer"></div>
+      <span class="rolepill">🎓 Estudiante</span>
+      <div class="who"><span>Sofía</span><div class="avatar">SO</div></div>
+      <button class="link" data-go="curso">← Mi curso</button>
+    </div>
+
+    <section class="strip" aria-label="Resumen de la sesión">
+      <div class="stat"><div class="k">Resueltos</div><div class="v" id="s-done">0</div></div>
+      <div class="stat"><div class="k">Aciertos</div><div class="v" id="s-acc">—</div></div>
+      <div class="stat"><div class="k">Racha</div><div class="v" id="s-streak">0</div></div>
+      <div class="stat"><div class="k">Puntos</div><div class="v gold" id="s-xp">0</div></div>
+      <div class="stat"><div class="k">Nivel</div><div class="v gold" id="s-level">1</div></div>
+    </section>
+
+    <div class="grid">
+      <div>
+        <main class="card" aria-label="Ejercicio actual">
+          <div class="card-h"><h2>Tu siguiente reto</h2><span class="sub" id="ex-reason"></span></div>
+          <div class="ex-body">
+            <div class="chips">
+              <span class="chip brand" id="ex-sub">—</span>
+              <span class="chip" id="ex-level">Básico</span>
+              <span class="chip"><span class="diff" id="ex-diff" aria-label="dificultad"></span></span>
+            </div>
+            <div class="prompt" id="ex-prompt" aria-live="polite"></div>
+            <div class="opts" id="ex-opts" role="group" aria-label="Opciones de respuesta"></div>
+            <div class="hint" id="hint" hidden>
+              <span class="ai">Tutor IA</span>
+              <div><b>Pista.</b> <span id="hint-text"></span></div>
+            </div>
+            <div class="ex-foot">
+              <button class="btn" id="btn-hint">💡 Pedir pista</button>
+              <button class="btn primary" id="btn-next" hidden>Siguiente reto →</button>
+              <span class="feedback" id="feedback" role="status" aria-live="polite"></span>
+            </div>
+          </div>
+        </main>
+
+        <section class="card chat" aria-label="Chat con el tutor IA">
+          <div class="card-h"><h2>💬 Pregúntale al tutor</h2><span class="sub">explica, da ejemplos y cita libros</span></div>
+          <div class="chat-log" id="chat-log"></div>
+          <div class="chat-chips" id="chat-chips">
+            <button data-intent="explain">Explícame el concepto</button>
+            <button data-intent="example">Dame un ejemplo</button>
+            <button data-intent="book">¿Dónde leo más?</button>
+            <button class="buzon" data-intent="buzon">📥 Dejar en el buzón</button>
+          </div>
+          <div class="chat-in">
+            <input id="chat-input" type="text" placeholder="Escribe tu pregunta… ej. ¿qué es la mediana?">
+            <button class="btn primary" id="chat-send">Enviar</button>
+          </div>
+        </section>
+      </div>
+
+      <aside style="display:grid; gap:18px;">
+        <section class="card" aria-label="Mapa de dominio">
+          <div class="card-h"><h2>Mapa de dominio</h2><span class="sub">en vivo</span></div>
+          <div class="panel-body" id="mastery"></div>
+        </section>
+        <section class="card" aria-label="Ruta adaptativa">
+          <div class="card-h"><h2>Ruta adaptativa</h2><span class="sub">por qué elijo cada paso</span></div>
+          <div class="route" id="route"><div class="empty">Responde tu primer reto y verás cómo GuIA ajusta tu ruta. ↑</div></div>
+        </section>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== EVALUACIÓN ===================== -->
+  <section class="view" data-view="evaluacion" hidden>
+    <div class="topbar">
+      <div class="brand"><div class="mark sm" data-mark></div><div><h1 style="font-size:16px">GuIA</h1></div></div>
+      <div class="spacer"></div>
+      <span class="rolepill">🎓 Estudiante</span>
+      <div class="who"><span>Sofía</span><div class="avatar">SO</div></div>
+      <button class="link" data-go="curso">← Mi curso</button>
+    </div>
+
+    <div class="section-h"><h2>Actividad evaluativa · Tema 1</h2><span class="chip gold">📋 Con rúbrica</span></div>
+    <div class="etabs" id="etabs">
+      <button data-et="quiz" class="active">Quiz</button>
+      <button data-et="taller">Taller</button>
+      <button data-et="examen">Examen</button>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="et-quiz" class="two-col">
+      <section class="card">
+        <div class="card-h"><h2>Quiz 1 · Tendencia central</h2><span class="sub">calificación automática</span></div>
+        <div class="ex-body">
+          <div class="prompt" style="font-size:20px">Un conjunto de datos tiene media 5 y mediana 3. ¿Qué sugiere esto?</div>
+          <div class="opts" id="q1">
+            <button class="opt"><span class="badge">A</span><span>Los datos son perfectamente simétricos</span></button>
+            <button class="opt"><span class="badge">B</span><span>Hay valores extremos altos que "jalan" la media</span></button>
+            <button class="opt"><span class="badge">C</span><span>La moda es 5</span></button>
+            <button class="opt"><span class="badge">D</span><span>Se calculó mal la mediana</span></button>
+          </div>
+          <div class="hint" id="q1-result" hidden><span class="ai">Rúbrica</span><div><b>Retroalimentación.</b> Media &gt; mediana indica asimetría a la derecha: hay valores extremos altos que elevan la media. Se califica: concepto (60%) + interpretación (40%).</div></div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-h"><h2>Rúbrica del quiz</h2></div>
+        <div class="tbl-wrap" style="padding:6px 6px 14px">
+          <table><thead><tr><th>Criterio</th><th>Peso</th></tr></thead>
+            <tbody>
+              <tr><td>Dominio del concepto</td><td>60%</td></tr>
+              <tr><td>Interpretación</td><td>40%</td></tr>
+              <tr><td><b>Calificación</b></td><td><b>automática</b></td></tr>
+            </tbody></table>
+        </div>
+      </section>
+    </div>
+
+    <!-- TALLER + OCR -->
+    <div id="et-taller" class="two-col" hidden>
+      <section class="card">
+        <div class="card-h"><h2>Taller 1 · resuelto en papel</h2><span class="chip p2 warm">OCR · Visión P2</span></div>
+        <div class="ex-body">
+          <p style="font-size:14px; color:var(--ink-2); margin:0 0 14px">Resuelve a mano: calcula la <b>media</b> y la <b>varianza muestral</b> de <b>4, 6, 11</b>. Toma una foto de tu solución y súbela — GuIA la interpreta con <b>OCR</b> y la califica contra la rúbrica.</p>
+          <button class="btn primary" id="btn-ocr">📷 Subir foto de mi solución</button>
+          <div class="hint" id="ocr-box" hidden style="display:block; margin-top:14px"></div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-h"><h2>Rúbrica del taller</h2></div>
+        <div class="tbl-wrap" style="padding:6px 6px 14px">
+          <table><thead><tr><th>Criterio</th><th>Puntos</th></tr></thead>
+            <tbody>
+              <tr><td>Planteamiento</td><td>30</td></tr>
+              <tr><td>Procedimiento</td><td>30</td></tr>
+              <tr><td>Resultado</td><td>20</td></tr>
+              <tr><td>Presentación</td><td>20</td></tr>
+            </tbody></table>
+        </div>
+      </section>
+    </div>
+
+    <!-- EXAMEN + PROCTORING -->
+    <div id="et-examen" class="two-col" hidden>
+      <section class="card">
+        <div class="card-h"><h2>Examen parcial · verificación previa</h2><span class="chip p2 warm">Proctoring · Visión P2</span></div>
+        <div class="ex-body">
+          <div class="cam"><span id="cam-txt">📷 Cámara<br><small>se activará para verificar tu identidad y tu entorno</small></span></div>
+          <div class="check-list" id="check-list" style="margin-top:14px">
+            <div class="check"><span class="dot">·</span> Cámara activada</div>
+            <div class="check"><span class="dot">·</span> Persona identificada (reconocimiento facial)</div>
+            <div class="check"><span class="dot">·</span> Sin objetos no permitidos a la vista</div>
+            <div class="check"><span class="dot">·</span> Distancia adecuada a la pantalla</div>
+            <div class="check"><span class="dot">·</span> Entorno y escritorio completo visibles</div>
+            <div class="check"><span class="dot">·</span> Monitoreo de ventanas y mouse activo</div>
+          </div>
+          <div class="ex-foot">
+            <button class="btn" id="btn-check">Iniciar verificación</button>
+            <button class="btn primary" id="btn-examen" disabled>Comenzar examen</button>
+          </div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-h"><h2>Reglas durante el examen</h2></div>
+        <div class="panel-body" style="font-size:13.5px; color:var(--ink-2)">
+          <div style="padding:7px 0; border-bottom:1px dashed var(--line)">🪟 Cambios de ventana/pestaña: <b>registrados</b></div>
+          <div style="padding:7px 0; border-bottom:1px dashed var(--line)">🖱️ Movimientos de mouse: <b>monitoreados</b></div>
+          <div style="padding:7px 0; border-bottom:1px dashed var(--line)">📵 En móvil: <b>no se permite abrir otras apps</b></div>
+          <div style="padding:7px 0; border-bottom:1px dashed var(--line)">📸 Pantallazos: <b>bloqueados</b></div>
+          <div style="padding:7px 0">📡 Si se cae internet: <b>la sesión se bloquea</b> y se reanuda con el docente</div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===================== AVATAR TUTOR ===================== -->
+  <section class="view" data-view="avatar" hidden>
+    <div class="topbar">
+      <div class="brand"><div class="mark sm" data-mark></div><div><h1 style="font-size:16px">GuIA</h1></div></div>
+      <div class="spacer"></div>
+      <span class="rolepill">🎓 Estudiante</span>
+      <div class="who"><span>Sofía</span><div class="avatar">SO</div></div>
+      <button class="link" data-go="practica">← Práctica</button>
+    </div>
+
+    <div class="section-h"><h2>Clase con avatar</h2><span class="chip p2 warm">Visión · P2 — simulación</span></div>
+
+    <div class="stage">
+      <div class="board">
+        <div class="bb" id="bb-text"></div>
+        <div class="avatarguy" aria-hidden="true">🧑‍🏫</div>
+        <div class="bubble" id="bubble"></div>
+        <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap">
+          <button class="btn sm" id="btn-interr">✋ Interrumpir y preguntar</button>
+          <button class="btn sm" id="btn-buzon2">📥 Dejar pregunta en el buzón</button>
+          <button class="btn sm primary" id="btn-avanzar">Continuar explicación →</button>
+        </div>
+      </div>
+      <section class="card">
+        <div class="card-h"><h2>📥 Buzón de preguntas</h2><span class="sub">se responden al final de la explicación</span></div>
+        <div class="buzon-list" id="buzon-list"><div class="buzon-item" style="border-style:solid; color:var(--ink-3)">Aún no hay preguntas…</div></div>
+        <div class="panel-body" style="padding-top:0">
+          <button class="btn sm block" id="btn-responder">El tutor terminó — ¿respondo el buzón?</button>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===================== PANEL DOCENTE ===================== -->
+  <section class="view" data-view="docente" hidden>
+    <div class="topbar">
+      <div class="brand"><div class="mark sm" data-mark></div><div><h1 style="font-size:16px">GuIA</h1></div></div>
+      <div class="spacer"></div>
+      <span class="rolepill">🧑‍🏫 Profesor</span>
+      <div class="who"><span>Prof. Javier</span><div class="avatar">JA</div></div>
+      <button class="link" data-go="landing">Salir</button>
+    </div>
+
+    <!-- Mis cursos -->
+    <div class="section-h"><h2>Mis cursos</h2><span class="sub">públicos y universitarios</span></div>
+    <div class="course-cards" style="margin-bottom:18px">
+      <div class="card ccard">
+        <h3>Estadística Fundamental</h3>
+        <div class="meta"><span class="chip brand">Público</span> · 128 estudiantes · abierto todo el año</div>
+        <button class="btn sm">Gestionar</button>
+        <button class="btn sm" id="btn-clase">▶ Presentar clase (Beamer)</button>
+      </div>
+      <div class="card ccard">
+        <h3>Estadística — Politécnico JIC</h3>
+        <div class="meta"><span class="chip warm">Universitario</span> <span class="chip">🔒 Privado · solo listado XLSX</span> · 28 estudiantes</div>
+        <button class="btn sm">Gestionar</button>
+        <button class="btn sm" id="btn-toggle-crear">+ Crear curso universitario</button>
+      </div>
+    </div>
+
+    <!-- Crear curso universitario (simulado) -->
+    <section class="card" id="crear-curso" hidden style="margin-bottom:18px">
+      <div class="card-h"><h2>Crear curso universitario</h2><span class="sub">con el temario que exige la institución</span></div>
+      <div class="form-grid">
+        <div class="field" style="margin:0"><label>Nombre del curso</label><input type="text" value="Estadística I"></div>
+        <div class="field" style="margin:0"><label>Universidad / institución</label><input type="text" value="Politécnico Jaime Isaza Cadavid"></div>
+        <div class="field" style="margin:0"><label>Temario institucional</label>
+          <button class="btn sm">📎 Adjuntar temario (PDF)</button>
+        </div>
+        <div class="field" style="margin:0"><label>Matrícula de estudiantes — curso privado, sin auto-inscripción</label>
+          <div class="xlsx-drop" id="xlsx-drop">⬆️ Sube el listado <b>.xlsx</b> con nombres y correos<br><small>🔒 Solo ellos tendrán acceso · se les notifica y crean su contraseña en el primer ingreso</small></div>
+        </div>
+        <div class="tbl-wrap" id="xlsx-result" hidden>
+          <table><thead><tr><th>Documento</th><th>Estudiante</th><th>Correo</th><th>Estado</th></tr></thead><tbody id="xlsx-tbody"></tbody></table>
+        </div>
+        <button class="btn primary" id="btn-crear-curso">Crear curso y notificar acceso</button>
+      </div>
+    </section>
+
+    <!-- Grupo -->
+    <div class="section-h"><h2>Grupo 0310 · Tecnología en Costos y Auditoría — Estadística CBS00074</h2><span class="sub">Politécnico JIC · Barbosa · 28 estudiantes</span></div>
+    <section class="strip c4" style="margin-bottom:18px">
+      <div class="stat"><div class="k">Dominio del grupo</div><div class="v">58<small>%</small></div></div>
+      <div class="stat"><div class="k">En riesgo</div><div class="v warn" id="d-risk">3</div></div>
+      <div class="stat"><div class="k">Ejercicios hoy</div><div class="v">412</div></div>
+      <div class="stat"><div class="k">Más flojo</div><div class="v" style="font-size:14px; line-height:1.3">Distribuciones</div></div>
+    </section>
+
+    <div class="two-col" style="margin-bottom:18px">
+      <section class="card">
+        <div class="card-h"><h2>Mapa de dominio de la clase</h2><span class="sub">verde = dominado · rojo = por reforzar</span></div>
+        <div class="tbl-wrap" style="padding:8px 6px 14px">
+          <table id="class-table"><thead></thead><tbody></tbody></table>
+        </div>
+      </section>
+      <section class="card risk">
+        <div class="card-h" style="padding:8px 2px 4px"><h2>Necesitan apoyo</h2></div>
+        <div id="risk-list"></div>
+      </section>
+    </div>
+
+    <!-- Seguimiento e informes -->
+    <div class="two-col">
+      <section class="card">
+        <div class="card-h"><h2>Seguimiento de uso</h2><span class="sub">frecuencia, duración y ruta por estudiante</span></div>
+        <div class="tbl-wrap" style="padding:6px 6px 14px">
+          <table>
+            <thead><tr><th>Estudiante</th><th>Último ingreso</th><th>Frecuencia</th><th>Duración media</th><th>Ruta seguida</th></tr></thead>
+            <tbody>
+              <tr><td>Sofía Ramírez</td><td>Hoy 9:14</td><td>5×/sem</td><td>32 min</td><td style="color:var(--ink-3)">Curso → Práctica → Tutor</td></tr>
+              <tr><td>Mateo López</td><td>Ayer 20:02</td><td>3×/sem</td><td>21 min</td><td style="color:var(--ink-3)">Diagnóstico → Práctica</td></tr>
+              <tr><td>Juan Díaz</td><td>Hace 6 días</td><td class="tag-warn">0.5×/sem</td><td>8 min</td><td style="color:var(--ink-3)">Curso → salió</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-h"><h2>Informes institucionales</h2><span class="chip p2 warm">Visión · P2</span></div>
+        <div class="panel-body">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:9px 0; border-bottom:1px dashed var(--line)">
+            <span style="font-size:13.5px">📄 FD-GC71 · Guía didáctica y concertación de evaluación <small style="color:var(--ink-3)">(docx)</small></span>
+            <button class="btn sm" data-informe>Generar automático</button>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:9px 0">
+            <span style="font-size:13.5px">📊 Listado de asistencia por sesión <small style="color:var(--ink-3)">(xlsx)</small></span>
+            <button class="btn sm" data-informe>Generar automático</button>
+          </div>
+          <p style="font-size:12px; color:var(--ink-3); margin:10px 0 0">GuIA leerá el formato que exige la universidad y lo llenará con los datos recaudados automáticamente del curso.</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===================== ADMIN ===================== -->
+  <section class="view" data-view="admin" hidden>
+    <div class="topbar">
+      <div class="brand"><div class="mark sm" data-mark></div><div><h1 style="font-size:16px">GuIA</h1></div></div>
+      <div class="spacer"></div>
+      <span class="rolepill">⚙️ Administrador</span>
+      <div class="who"><span>Admin</span><div class="avatar">AD</div></div>
+      <button class="link" data-go="landing">Salir</button>
+    </div>
+
+    <div class="section-h"><h2>Panel de administración</h2><span class="sub">plataforma GuIA</span></div>
+
+    <section class="strip c4" style="margin-bottom:18px">
+      <div class="stat"><div class="k">Usuarios</div><div class="v">1,248</div></div>
+      <div class="stat"><div class="k">Activos hoy</div><div class="v">312</div></div>
+      <div class="stat"><div class="k">Sesiones (7d)</div><div class="v">4,905</div></div>
+      <div class="stat"><div class="k">Costo IA (mes)</div><div class="v">$18<small>.40</small></div></div>
+    </section>
+
+    <div class="two-col">
+      <section class="card">
+        <div class="card-h"><h2>Usuarios</h2><span class="sub">últimos registros</span></div>
+        <div class="tbl-wrap" style="padding:6px 6px 14px">
+          <table id="users-table"><thead><tr><th>Usuario</th><th>Rol</th><th>Estado</th><th>Último acceso</th></tr></thead><tbody></tbody></table>
+        </div>
+      </section>
+      <div style="display:grid; gap:18px">
+        <section class="card">
+          <div class="card-h"><h2>Evaluación de los cursos</h2><span class="sub">por los estudiantes · 87 respuestas</span></div>
+          <div class="eval-bars">
+            <div class="er"><span class="nm">Contenido</span><div class="bar"><i style="width:92%; background:var(--m-high)"></i></div><span class="sc">4.6/5</span></div>
+            <div class="er"><span class="nm">Tutor IA</span><div class="bar"><i style="width:96%; background:var(--m-high)"></i></div><span class="sc">4.8/5</span></div>
+            <div class="er"><span class="nm">Plataforma</span><div class="bar"><i style="width:88%; background:var(--m-mid)"></i></div><span class="sc">4.4/5</span></div>
+            <div class="er"><span class="nm">Evaluaciones</span><div class="bar"><i style="width:84%; background:var(--m-mid)"></i></div><span class="sc">4.2/5</span></div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="card-h"><h2>Contenido</h2><span class="sub">cursos y banco</span></div>
+          <div class="panel-body">
+            <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px dashed var(--line)"><span>Estadística Fundamental</span><span class="tag-ok">Activo · 48 ejercicios</span></div>
+            <div style="display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px dashed var(--line)"><span>Estadística — Politécnico JIC</span><span class="tag-ok">Activo · 🔒 privado</span></div>
+            <div style="display:flex; justify-content:space-between; padding:9px 0"><span>Álgebra básica</span><span style="color:var(--ink-3)">Borrador</span></div>
+            <button class="btn block sm" style="margin-top:14px">+ Añadir curso</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot-note">Prototipo v2 de <b>GuIA</b> · Estadística adaptativa con tutor IA anclado en libros · usa la barra superior para recorrer las pantallas.</p>
+</div>
+
+<!-- toast + modal (fuera del wrap) -->
+<div class="toast" id="toast" role="status"></div>
+<div class="modal-bg" id="beamer" hidden>
+  <div class="slide">
+    <canvas id="sl-canvas"></canvas>
+    <button class="link close-x" id="beamer-close">✕ cerrar</button>
+    <div class="s-head">GuIA · Modo clase (Beamer) — simulación</div>
+    <h2 id="sl-title"></h2>
+    <div class="s-body" id="sl-body"></div>
+    <div class="s-foot">
+      <button class="btn sm" id="sl-prev">← Anterior</button>
+      <button class="btn sm primary" id="sl-next">Siguiente →</button>
+      <button class="btn sm" id="sl-rayar">✏️ Rayar</button>
+      <span style="font-size:12px; color:var(--ink-3)">💬 Tutor IA disponible durante la clase</span>
+      <span class="cnt" id="sl-cnt">1 / 3</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Logo: infinito (lemniscata) — guiño ∞ → toro/Klein ---------- */
+  var INF='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">'+
+    '<path class="inf" d="M12 12 C10 8.6, 4.6 8.6, 4.6 12 C4.6 15.4, 10 15.4, 12 12 C14 8.6, 19.4 8.6, 19.4 12 C19.4 15.4, 14 15.4, 12 12 Z"/></svg>';
+  document.querySelectorAll('[data-mark],[data-mark-hero]').forEach(function(e){ e.innerHTML=INF; });
+
+  var F=function(n,d){ return '<span class="frac"><span>'+n+'</span><span>'+d+'</span></span>'; };
+
+  /* ---------- Toast ---------- */
+  var toastT=null;
+  function toast(msg){
+    var t=document.getElementById('toast'); t.innerHTML=msg; t.classList.add('show');
+    clearTimeout(toastT); toastT=setTimeout(function(){ t.classList.remove('show'); }, 3200);
+  }
+
+  /* ---------- Router ---------- */
+  var views=document.querySelectorAll('.view');
+  var navBtns=document.querySelectorAll('.demo-nav [data-go]');
+  function show(v){
+    views.forEach(function(s){ s.hidden = (s.getAttribute('data-view')!==v); });
+    navBtns.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-go')===v); });
+    window.scrollTo(0,0);
+    if(v==='practica'){ ensurePractice(); }
+    if(v==='curso'){ renderCurso(); }
+    if(v==='docente'){ renderClass(); }
+    if(v==='admin'){ renderUsers(); }
+  }
+  document.body.addEventListener('click', function(e){
+    var t=e.target.closest('[data-go]'); if(!t) return; e.preventDefault(); show(t.getAttribute('data-go'));
+  });
+
+  /* ---------- Login: roles + estados ---------- */
+  var roleDesc={ est:'Entrarás a tu curso y tu ruta de aprendizaje personalizada.',
+                 prof:'Gestionarás tus cursos, matrículas y el progreso de tus grupos.',
+                 adm:'Gestionarás usuarios, contenido y evaluación de la plataforma.' };
+  var roleView={ est:'curso', prof:'docente', adm:'admin' };
+  var curRole='est';
+  document.querySelectorAll('#roletabs button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#roletabs button').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active'); curRole=b.getAttribute('data-role');
+      document.getElementById('role-desc').textContent=roleDesc[curRole];
+    });
+  });
+  document.getElementById('btn-login').addEventListener('click', function(){ show(roleView[curRole]); });
+
+  function authState(s){
+    ['login','forgot','first'].forEach(function(x){
+      document.getElementById('auth-'+x).hidden = (x!==s);
+    });
+    document.getElementById('forgot-ok').hidden=true; document.getElementById('forgot-form').hidden=false;
+    document.getElementById('first-ok').hidden=true; document.getElementById('first-form').hidden=false;
+  }
+  document.querySelectorAll('[data-auth]').forEach(function(b){
+    b.addEventListener('click', function(){ authState(b.getAttribute('data-auth')); });
+  });
+  document.getElementById('btn-forgot').addEventListener('click', function(){
+    document.getElementById('forgot-form').hidden=true; document.getElementById('forgot-ok').hidden=false;
+  });
+  document.getElementById('btn-first').addEventListener('click', function(){
+    document.getElementById('first-form').hidden=true; document.getElementById('first-ok').hidden=false;
+    setTimeout(function(){ show('curso'); toast('🎓 Bienvenida al curso Estadística — Politécnico JIC'); }, 1400);
+  });
+
+  /* ---------- Dominio: ESTADÍSTICA ---------- */
+  var subtemas=[
+    { id:'vars', name:'Tipos de variables', short:'Vars', m:0.72,
+      book:{t:'Walpole, Myers & Ye (2007) · Probabilidad y estadística', c:'Cap. 1 · Introducción y análisis de datos', p:'pág. 1'},
+      explain:'Una variable es una característica que puede tomar distintos valores. Se clasifican en <b>cualitativas</b> (categorías: nominales u ordinales) y <b>cuantitativas</b> (números: discretas si se cuentan, continuas si se miden).',
+      example:'Ejemplo: el color de ojos es cualitativa nominal; el estrato (1–6) es cualitativa ordinal; el número de hermanos es cuantitativa discreta; la estatura es cuantitativa continua.' },
+    { id:'tablas', name:'Tablas de frecuencia', short:'fᵢ', m:0.60,
+      book:{t:'Devore (2015) · Probability and Statistics', c:'Cap. 1 · Estadística descriptiva', p:'pág. 12'},
+      explain:'Una tabla de frecuencias organiza los datos: frecuencia absoluta (fᵢ), relativa (hᵢ = fᵢ/n) y acumuladas. Para variables continuas los valores se agrupan en <b>intervalos de clase</b>.',
+      example:'Notas de 30 estudiantes agrupadas en [1,2), [2,3), [3,4), [4,5]: con fᵢ, hᵢ y Fᵢ puedes leer de una vez "el 70% del grupo sacó menos de 4".' },
+    { id:'tc', name:'Tendencia central', short:'x̄', m:0.55,
+      book:{t:'Devore (2015) · Probability and Statistics', c:'Cap. 1 · Medidas de localización', p:'pág. 28'},
+      explain:'Las medidas de tendencia central resumen dónde se concentran los datos: la <b>media</b> es el promedio, la <b>mediana</b> el valor central de los datos ordenados y la <b>moda</b> el más frecuente.',
+      example:'Datos: 2, 3, 3, 8, 9 → media = 5, mediana = 3, moda = 3. La media "sube" por el 8 y el 9 (es sensible a extremos); la mediana no.' },
+    { id:'disp', name:'Dispersión', short:'σ', m:0.30,
+      book:{t:'Devore (2015) · Probability and Statistics', c:'Cap. 1 · Medidas de variabilidad', p:'pág. 35'},
+      explain:'Las medidas de dispersión indican qué tan separados están los datos: <b>rango</b> (máx − mín), <b>varianza</b> (promedio de desviaciones²) y <b>desviación estándar</b> (raíz de la varianza, en las unidades originales).',
+      example:'Dos cursos con promedio 3.5: uno con notas entre 3.4 y 3.6 (σ pequeña) y otro entre 1.0 y 5.0 (σ grande). Misma media, historias muy distintas.' },
+    { id:'regresion', name:'Regresión y correlación', short:'ŷ', m:0.18,
+      book:{t:'Walpole, Myers & Ye (2007) · Probabilidad y estadística', c:'Cap. 11 · Regresión lineal simple', p:'pág. 389'},
+      explain:'La regresión lineal simple ajusta <b>ŷ = a + bx</b> para predecir Y a partir de X. El coeficiente de correlación <b>r</b> mide fuerza y dirección de la relación lineal; <b>r²</b> (determinación) dice cuánta variabilidad explica el modelo.',
+      example:'Horas de estudio (x) vs. nota (y): ŷ = 1.2 + 0.6x con r = 0.9 → cada hora extra suma 0.6 puntos esperados y el modelo explica el 81% (r²) de la variación.' },
+    { id:'prob', name:'Probabilidad básica', short:'P(A)', m:0.45,
+      book:{t:'Walpole, Myers & Ye (2007) · Probabilidad y estadística', c:'Cap. 2 · Probabilidad', p:'pág. 35'},
+      explain:'La probabilidad mide qué tan posible es un evento, entre 0 y 1. Regla clásica: <b>casos favorables ÷ casos posibles</b>. El complemento cumple P(A) + P(no A) = 1.',
+      example:'P(sacar par con un dado) = 3/6 = 0.5. P(no sacar 6) = 1 − 1/6 = 5/6.' },
+    { id:'dist', name:'Distribuciones', short:'N(μ,σ)', m:0.25,
+      book:{t:'Montgomery & Runger (2010) · Applied Statistics', c:'Cap. 4 · Distribuciones continuas', p:'pág. 107'},
+      explain:'Una distribución describe cómo se reparten los valores de una variable aleatoria. La <b>normal</b> es simétrica en torno a μ y cumple la regla 68-95-99.7; la <b>binomial</b> cuenta éxitos en n ensayos independientes.<div class="math">f(x) = (1 / (σ√(2π))) · e<sup>−(x−μ)² / 2σ²</sup></div>',
+      example:'Si las estaturas siguen N(170, 8): ≈68% de las personas mide entre 162 y 178 cm.' },
+    { id:'muestreo', name:'Muestreo e inferencia', short:'n', m:0.20,
+      book:{t:'Walpole, Myers & Ye (2007) · Probabilidad y estadística', c:'Cap. 8 · Distribuciones muestrales', p:'pág. 225'},
+      explain:'El muestreo permite estudiar una población observando solo una parte. Si la muestra es <b>aleatoria</b>, podemos inferir con un margen de error que disminuye al crecer n.',
+      example:'Encuestar a 400 estudiantes elegidos al azar entre 10 000: cada uno tuvo la misma probabilidad de salir, y el error muestral es menor que con 50.' }
+  ];
+
+  var bank={
+    vars:[
+      {d:2,p:'La estatura de una persona es una variable…',o:['Cualitativa nominal','Cuantitativa continua','Cuantitativa discreta','Cualitativa ordinal'],c:1,
+       h:'Pregúntate: ¿se mide o se cuenta? ¿Puede tomar cualquier valor dentro de un rango, como 1.735 m?'},
+      {d:3,p:'El estrato socioeconómico (1 a 6) es una variable…',o:['Cuantitativa discreta','Cualitativa nominal','Cualitativa ordinal','Cuantitativa continua'],c:2,
+       h:'Son categorías con un orden, aunque se escriban con números. ¿Tiene sentido "promediar" estratos?'}
+    ],
+    tablas:[
+      {d:2,p:'En una tabla de frecuencias, la frecuencia relativa hᵢ se calcula como…',o:['fᵢ / n','n / fᵢ','Σfᵢ','fᵢ − 1'],c:0,
+       h:'Es una proporción: las veces que ocurre la clase sobre el total de datos.'},
+      {d:3,p:'Para agrupar una variable continua con muchos datos se usan…',o:['Intervalos de clase','Categorías nominales','Solo la moda','Diagramas de torta'],c:0,
+       h:'Cuando la variable es continua, los valores se agrupan en rangos consecutivos.'}
+    ],
+    tc:[
+      {d:2,p:'Datos: 2, 3, 3, 8, 9. ¿Cuál es la mediana?',o:['3','5','8','2'],c:0,
+       h:'Ordena los datos y busca el valor que queda exactamente en el centro.'},
+      {d:3,p:'La media de 4, 6 y 11 es…',o:['6','7','21','5.5'],c:1,
+       h:'Suma todos los valores y divide entre cuántos son: (4 + 6 + 11) ÷ 3.'}
+    ],
+    disp:[
+      {d:3,p:'¿Qué mide la desviación estándar?',o:['El valor más frecuente','El centro de los datos','Qué tan dispersos están los datos respecto a la media','El valor máximo'],c:2,
+       h:'Imagina dos grupos con la misma media pero datos muy diferentes entre sí. ¿Qué los distingue?'},
+      {d:2,p:'El rango de los datos 5, 9, 12, 20 es…',o:['15','25','12','5'],c:0,
+       h:'El rango es la distancia entre el valor mayor y el menor.'}
+    ],
+    regresion:[
+      {d:3,p:'Un coeficiente de correlación r = −0.95 indica…',o:['Relación lineal negativa fuerte','Que no hay relación','Relación positiva débil','Causalidad directa'],c:0,
+       h:'El signo da la dirección y la cercanía a ±1 la fuerza. Ojo: correlación no implica causalidad.'},
+      {d:4,p:'En la recta de regresión ŷ = 3 + 2x, el 2 representa…',o:['El intercepto','El cambio en ŷ por cada unidad de x','El error estándar','El coeficiente r²'],c:1,
+       h:'Es la pendiente: cuánto cambia la predicción cuando x aumenta en una unidad.'}
+    ],
+    prob:[
+      {d:2,p:'Al lanzar un dado, la probabilidad de obtener un número par es…',o:[F('1','6'),F('1','3'),F('1','2'),F('2','3')],c:2,
+       h:'Cuenta los casos favorables (2, 4 y 6) sobre los casos posibles (6).'},
+      {d:3,p:'Si P(A) = 0.3, entonces P(no A) es…',o:['0.3','0.7','0.09','1.3'],c:1,
+       h:'Un evento y su complemento siempre suman 1.'}
+    ],
+    dist:[
+      {d:4,p:'En una distribución normal, ¿qué porcentaje aproximado de los datos cae entre μ−σ y μ+σ?',o:['50%','68%','95%','99.7%'],c:1,
+       h:'Es la regla empírica 68-95-99.7. El primer número corresponde a ±1σ.'},
+      {d:4,p:'La distribución binomial modela…',o:['El tiempo entre eventos','El número de éxitos en n ensayos independientes','Valores continuos simétricos','La media de una muestra'],c:1,
+       h:'Piensa en repetir un experimento de sí/no varias veces y contar cuántos "sí" salen.'}
+    ],
+    muestreo:[
+      {d:3,p:'En un muestreo aleatorio simple…',o:['Se eligen los casos más fáciles de encontrar','Cada elemento tiene la misma probabilidad de ser elegido','Solo participan voluntarios','Se selecciona por cuotas'],c:1,
+       h:'La palabra clave es "aleatorio": ¿qué garantiza el azar para cada elemento de la población?'},
+      {d:4,p:'El error muestral tiende a disminuir cuando…',o:['Aumenta el tamaño de la muestra','Disminuye el tamaño de la muestra','Se usa una muestra por conveniencia','Aumenta la varianza'],c:0,
+       h:'Más información suele dar estimaciones más precisas. ¿Qué pasa cuando n crece?'}
+    ]
+  };
+
+  var THRESH=0.85;
+  function nivelLabel(d){ return d<=2?'Básico':(d===3?'Intermedio':'Avanzado'); }
+  function expected(m,d){ var t=(d-0.5)/5; return 1/(1+Math.pow(10,(t-m)*2)); }
+  function updateMastery(s,d,ok){ var K=0.16,before=s.m,e=expected(s.m,d); s.m=Math.max(0,Math.min(1,s.m+K*((ok?1:0)-e))); return {before:before,after:s.m}; }
+  function barColor(m){ return m>=0.75?'var(--m-high)':m>=0.45?'var(--m-mid)':'var(--m-low)'; }
+  function byId(id){ for(var i=0;i<subtemas.length;i++) if(subtemas[i].id===id) return subtemas[i]; }
+
+  /* ---------- Gamificación ---------- */
+  var game={ xp:0, insignias:[] };
+  function award(id,label){
+    if(game.insignias.indexOf(id)>=0) return;
+    game.insignias.push(id); toast('🎖️ ¡Insignia desbloqueada: '+label+'!');
+    renderBadges();
+  }
+  function addXP(n){ game.xp+=n; if(game.xp>=100) award('cien','100 puntos');
+    var lv=1+Math.floor(game.xp/100); return lv; }
+  function level(){ return 1+Math.floor(game.xp/100); }
+  function renderBadges(){
+    var el=document.getElementById('b-insignias');
+    var names={primer:'Primer acierto',racha3:'Racha ×3',cien:'100 puntos'};
+    el.innerHTML='🎖️ Insignias: '+(game.insignias.length? game.insignias.map(function(i){return names[i];}).join(' · ') : '—');
+  }
+
+  /* ---------- CURSO (recorrido Tema → Subtemas → Actividad) ---------- */
+  var temas=[
+    { n:'Unidad 1', t:'Nociones preliminares en Estadística', subs:['vars'], act:'Quiz 1 · con rúbrica' },
+    { n:'Unidad 2', t:'Tablas estadísticas', subs:['tablas'], act:'Taller 1 · con rúbrica' },
+    { n:'Unidad 3', t:'Medidas de resumen descriptivas', subs:['tc','disp'], act:'Quiz 2 · con rúbrica' },
+    { n:'Unidad 4', t:'Regresión y correlación simple', subs:['regresion'], act:'Taller 2 · con rúbrica' },
+    { n:'Unidad 5', t:'Probabilidad y modelos probabilísticos', subs:['prob','dist'], act:'Examen parcial · con rúbrica' },
+    { n:'Unidad 6', t:'Muestreo y tamaño de muestra', subs:['muestreo'], act:'Trabajo final · con rúbrica' }
+  ];
+  function renderCurso(){
+    var wrap=document.getElementById('temas'); wrap.innerHTML='';
+    var total=0;
+    subtemas.forEach(function(s){ total+=s.m; });
+    var pct=Math.round(total/subtemas.length*100);
+    document.getElementById('course-prog').style.width=pct+'%';
+    document.getElementById('course-pct').textContent=pct+'%';
+    document.getElementById('b-level').textContent=level();
+    document.getElementById('b-xp').textContent=game.xp;
+    document.getElementById('b-streak').textContent=st.streak;
+    renderBadges();
+
+    temas.forEach(function(tm){
+      var card=document.createElement('section'); card.className='card tema';
+      var avg=0; tm.subs.forEach(function(id){ avg+=byId(id).m; }); avg/=tm.subs.length;
+      var html='<div class="t-head"><span class="tn">'+tm.n+'</span><h3>'+tm.t+'</h3>'+
+        '<span class="chip" style="margin-left:auto">'+Math.round(avg*100)+'% dominio</span></div><div class="t-body">';
+      tm.subs.forEach(function(id){
+        var s=byId(id);
+        var state=s.m>=THRESH?'done':(s.m>=0.35?'doing':'');
+        var ic=s.m>=THRESH?'✓':(s.m>=0.35?'▶':'○');
+        var lbl=s.m>=THRESH?'Completado':(s.m>=0.35?'En curso':'Pendiente');
+        html+='<div class="sub-row '+state+'"><div class="st-ic">'+ic+'</div>'+
+          '<div class="nm"><b>'+s.name+'</b><small>'+lbl+' · avance registrado</small></div>'+
+          '<div class="mini"><div class="bar"><i style="width:'+Math.round(s.m*100)+'%; background:'+barColor(s.m)+'"></i></div>'+
+          '<div class="pct">'+Math.round(s.m*100)+'%</div></div>'+
+          '<button class="btn sm" data-go="practica">Practicar</button></div>';
+      });
+      var unlocked = avg>=0.6;
+      html+='<div class="sub-row activity"><div class="st-ic">'+(unlocked?'📝':'🔒')+'</div>'+
+        '<div class="nm"><b>Actividad evaluativa</b><small>'+tm.act+'</small></div>'+
+        '<button class="btn sm'+(unlocked?' primary':'')+'"'+(unlocked?' data-go="evaluacion"':' disabled')+'>'+(unlocked?'Comenzar':'Se desbloquea al 60%')+'</button></div>';
+      html+='</div>';
+      card.innerHTML=html; wrap.appendChild(card);
+    });
+  }
+
+  /* ---------- DIAGNÓSTICO ---------- */
+  var diagList=[ ['vars',0],['tablas',0],['tc',1],['regresion',0],['dist',0],['muestreo',1] ];
+  var diagResult={}; var di=0;
+  document.getElementById('diag-start').addEventListener('click', function(){
+    di=0; diagResult={};
+    document.getElementById('diag-intro').hidden=true; document.getElementById('diag-done').hidden=true;
+    document.getElementById('diag-q').hidden=false; diagShow();
+  });
+  function diagShow(){
+    var item=diagList[di]; var ex=bank[item[0]][item[1]]; var s=byId(item[0]);
+    document.getElementById('diag-count').textContent='Pregunta '+(di+1)+' de '+diagList.length;
+    document.getElementById('diag-sub').textContent=s.name;
+    document.getElementById('diag-level').textContent=nivelLabel(ex.d);
+    document.getElementById('diag-prog').style.width=Math.round(di/diagList.length*100)+'%';
+    document.getElementById('diag-prompt').innerHTML=ex.p;
+    var opts=document.getElementById('diag-opts'); opts.innerHTML='';
+    ex.o.forEach(function(txt,i){ var b=document.createElement('button'); b.className='opt'; b.type='button';
+      b.innerHTML='<span class="badge">'+String.fromCharCode(65+i)+'</span><span>'+txt+'</span>';
+      b.addEventListener('click', function(){ diagAnswer(item[0], i===ex.c); }); opts.appendChild(b); });
+  }
+  function diagAnswer(subId, ok){
+    if(!diagResult[subId]) diagResult[subId]={c:0,n:0}; diagResult[subId].n++; if(ok) diagResult[subId].c++;
+    di++;
+    if(di<diagList.length){ diagShow(); }
+    else{
+      subtemas.forEach(function(s){ var r=diagResult[s.id]; if(r){ s.m=Math.max(0.12,Math.min(0.9, 0.22 + 0.6*(r.c/r.n))); } });
+      document.getElementById('diag-prog').style.width='100%';
+      document.getElementById('diag-q').hidden=true; document.getElementById('diag-done').hidden=false;
+      var map=document.getElementById('diag-map'); map.innerHTML=''; renderMasteryInto(map,null);
+    }
+  }
+
+  /* ---------- Mastery render ---------- */
+  function renderMasteryInto(el, focusId){
+    el.innerHTML='';
+    subtemas.forEach(function(s){
+      var row=document.createElement('div'); row.className='mrow'+(s.id===focusId?' focus':'');
+      row.innerHTML='<div class="top"><span class="name">'+s.name+'</span><span class="pct">'+Math.round(s.m*100)+'%</span></div>'+
+        '<div class="bar"><i style="background:'+barColor(s.m)+'"></i></div>';
+      el.appendChild(row);
+      requestAnimationFrame(function(){ row.querySelector('.bar > i').style.width=Math.round(s.m*100)+'%'; });
+    });
+    var lg=document.createElement('div'); lg.className='legend';
+    lg.innerHTML='<span><i style="background:var(--m-low)"></i>Por reforzar</span><span><i style="background:var(--m-mid)"></i>En progreso</span><span><i style="background:var(--m-high)"></i>Dominado</span>';
+    el.appendChild(lg);
+  }
+
+  /* ---------- PRÁCTICA ---------- */
+  var st={done:0,correct:0,streak:0,cur:null,curSub:null,answered:false,bankIdx:{},lastFail:{}};
+  subtemas.forEach(function(s){ st.bankIdx[s.id]=0; st.lastFail[s.id]=0; });
+  var practiceStarted=false;
+  function ensurePractice(){ if(!practiceStarted){ practiceStarted=true; renderStats(); loadExercise(); chatWelcome(); } else { renderMastery(st.curSub?st.curSub.id:null); } }
+
+  function selectNext(){
+    var cands=subtemas.filter(function(s){ return s.m<THRESH; }); if(!cands.length) cands=subtemas.slice();
+    var mid=cands.filter(function(s){ return s.m>=0.2 && s.m<=0.8; }); var pool=mid.length?mid:cands;
+    pool.sort(function(a,b){ return a.m-b.m; }); var s=pool[0];
+    var reason=s.m<0.35?'Es donde más te cuesta: reforcemos con calma.':s.m<0.7?'Aquí puedes crecer más ahora mismo.':'Casi lo dominas: un empujón más.';
+    return {sub:s,reason:reason};
+  }
+  function diffDots(d){ var h=''; for(var i=1;i<=5;i++){ h+='<i class="'+(i<=d?'on':'')+'"></i>'; } return h; }
+  function renderMastery(f){ renderMasteryInto(document.getElementById('mastery'), f); }
+  function renderStats(){
+    document.getElementById('s-done').textContent=st.done;
+    document.getElementById('s-acc').textContent= st.done?Math.round(st.correct/st.done*100)+'%':'—';
+    document.getElementById('s-streak').textContent=st.streak;
+    document.getElementById('s-xp').textContent=game.xp;
+    document.getElementById('s-level').textContent=level();
+  }
+  function loadExercise(){
+    var pick=selectNext(); var s=pick.sub; var idx=st.bankIdx[s.id]%bank[s.id].length; st.bankIdx[s.id]++;
+    var ex=bank[s.id][idx]; st.cur=ex; st.curSub=s; st.answered=false;
+    document.getElementById('ex-sub').textContent=s.name;
+    document.getElementById('ex-level').textContent=nivelLabel(ex.d);
+    document.getElementById('ex-reason').textContent=pick.reason;
+    document.getElementById('ex-diff').innerHTML=diffDots(ex.d);
+    document.getElementById('ex-prompt').innerHTML=ex.p;
+    document.getElementById('feedback').textContent=''; document.getElementById('feedback').className='feedback';
+    document.getElementById('btn-next').hidden=true; document.getElementById('btn-hint').hidden=false;
+    document.getElementById('hint').hidden=true; document.getElementById('hint-text').textContent=ex.h;
+    var opts=document.getElementById('ex-opts'); opts.innerHTML='';
+    ex.o.forEach(function(txt,i){ var b=document.createElement('button'); b.className='opt'; b.type='button';
+      b.innerHTML='<span class="badge">'+String.fromCharCode(65+i)+'</span><span>'+txt+'</span>';
+      b.addEventListener('click', function(){ answer(i); }); opts.appendChild(b); });
+    renderMastery(s.id);
+  }
+  function answer(i){
+    if(st.answered) return; st.answered=true; var ex=st.cur,s=st.curSub,ok=(i===ex.c);
+    document.querySelectorAll('#ex-opts .opt').forEach(function(o,k){ o.disabled=true;
+      if(k===ex.c) o.classList.add('correct'); else if(k===i) o.classList.add('wrong'); else o.classList.add('dim'); });
+    var delta=updateMastery(s,ex.d,ok);
+    st.done++;
+    if(ok){ st.correct++; st.streak++; st.lastFail[s.id]=0; addXP(10*ex.d); award('primer','Primer acierto'); if(st.streak===3) award('racha3','Racha ×3'); }
+    else { st.streak=0; st.lastFail[s.id]++; addXP(2); }
+    var fb=document.getElementById('feedback');
+    fb.textContent= ok?'¡Correcto! +'+(10*ex.d)+' pts':'Casi. Mira la pista y sigue.';
+    fb.className='feedback '+(ok?'ok':'no');
+    document.getElementById('btn-hint').hidden=true; if(!ok) document.getElementById('hint').hidden=false;
+    document.getElementById('btn-next').hidden=false; document.getElementById('btn-next').focus();
+    renderMastery(s.id); renderStats(); addStep(s,ok,delta);
+  }
+  function motivo(s,ok){
+    if(!ok && st.lastFail[s.id]>=2) return 'Fallaste 2 veces «'+s.name+'» → bajo la dificultad y refuerzo la base.';
+    if(!ok) return 'Error en «'+s.name+'» → pista socrática y repito el concepto.';
+    if(s.m>=THRESH) return '¡Dominaste «'+s.name+'»! → avanzo al siguiente subtema.';
+    return 'Acierto en «'+s.name+'» → subo un poco el reto.';
+  }
+  function addStep(s,ok,delta){
+    var route=document.getElementById('route'); var empty=route.querySelector('.empty'); if(empty) empty.remove();
+    var step=document.createElement('div'); step.className='step '+(ok?'ok':'no')+' anim-in';
+    var d=Math.round((delta.after-delta.before)*100);
+    step.innerHTML='<div class="h"><span class="res">'+(ok?'✓ ACIERTO':'✗ FALLO')+'</span><span class="st">'+s.name+'</span></div>'+
+      '<div class="why">'+motivo(s,ok)+'</div>'+
+      '<div class="delta">dominio '+Math.round(delta.before*100)+'% → '+Math.round(delta.after*100)+'% ('+(d>=0?'+':'')+d+')</div>';
+    route.insertBefore(step, route.firstChild);
+  }
+  document.getElementById('btn-hint').addEventListener('click', function(){ document.getElementById('hint').hidden=false; this.hidden=true; });
+  document.getElementById('btn-next').addEventListener('click', loadExercise);
+
+  /* ---------- CHAT del tutor ---------- */
+  function addMsg(who, html){
+    var log=document.getElementById('chat-log');
+    var m=document.createElement('div'); m.className='msg '+who+' anim-in';
+    m.innerHTML=(who==='tutor'?'<div class="who">Tutor IA</div>':'')+html;
+    log.appendChild(m); log.scrollTop=log.scrollHeight;
+  }
+  function bookCard(s){
+    return '<div class="bookref">📖<div><b>'+s.book.t+'</b><small>'+s.book.c+' · '+s.book.p+'</small>'+
+      'Léelo para profundizar en <b>'+s.name.toLowerCase()+'</b>.</div></div>';
+  }
+  function chatWelcome(){
+    addMsg('tutor','Hola Sofía 👋 Soy tu tutor de Estadística. Pregúntame lo que quieras sobre el tema en pantalla: te doy <b>explicaciones</b>, <b>ejemplos</b>, <b>fórmulas y gráficos</b>, y te digo <b>en qué libro, capítulo y página</b> leer más. Prueba: <i>"¿qué es la distribución normal?"</i>');
+  }
+  function normalGraph(){
+    var pts=[]; for(var i=0;i<=60;i++){ var x=-3+i*0.1; var y=Math.exp(-x*x/2);
+      pts.push([(10+(x+3)/6*280).toFixed(1),(104-y*88).toFixed(1)]); }
+    var path='M'+pts.map(function(p){return p[0]+' '+p[1];}).join(' L');
+    var reg=pts.filter(function(p,i){ var x=-3+i*0.1; return x>=-1.001&&x<=1.001; });
+    var area='M'+reg[0][0]+' 104 L'+reg.map(function(p){return p[0]+' '+p[1];}).join(' L')+' L'+reg[reg.length-1][0]+' 104 Z';
+    function X(x){ return (10+(x+3)/6*280).toFixed(1); }
+    return '<div class="graph"><svg viewBox="0 0 300 122" width="100%" role="img" aria-label="Curva normal con el 68% sombreado">'+
+      '<path d="'+area+'" fill="var(--brand)" opacity=".22"/>'+
+      '<path d="'+path+'" fill="none" stroke="var(--brand-ink)" stroke-width="2"/>'+
+      '<line x1="10" y1="104" x2="290" y2="104" stroke="var(--line-strong)"/>'+
+      '<line x1="'+X(-1)+'" y1="104" x2="'+X(-1)+'" y2="42" stroke="var(--line-strong)" stroke-dasharray="3 3"/>'+
+      '<line x1="'+X(1)+'" y1="104" x2="'+X(1)+'" y2="42" stroke="var(--line-strong)" stroke-dasharray="3 3"/>'+
+      '<text x="'+X(0)+'" y="62" text-anchor="middle" font-size="12" fill="var(--ink)" font-weight="700">≈68%</text>'+
+      '<text x="'+X(-1)+'" y="117" text-anchor="middle" font-size="10" fill="var(--ink-3)">μ−σ</text>'+
+      '<text x="'+X(0)+'" y="117" text-anchor="middle" font-size="10" fill="var(--ink-3)">μ</text>'+
+      '<text x="'+X(1)+'" y="117" text-anchor="middle" font-size="10" fill="var(--ink-3)">μ+σ</text>'+
+      '</svg><small>Vista previa · en la app real: fórmulas con KaTeX y gráficos TikZ / interactivos</small></div>';
+  }
+  function detectSub(q){
+    q=q.toLowerCase();
+    if(/regresi|correlaci|pendiente|determinaci/.test(q)) return byId('regresion');
+    if(/tabla|frecuencia|intervalo/.test(q)) return byId('tablas');
+    if(/median|media\b|promedio|moda|tendencia/.test(q)) return byId('tc');
+    if(/varianza|desviaci|rango|dispersi/.test(q)) return byId('disp');
+    if(/probabilidad|dado|moneda|evento/.test(q)) return byId('prob');
+    if(/normal|binomial|distribuci|campana/.test(q)) return byId('dist');
+    if(/muestra|muestreo|inferencia|poblaci/.test(q)) return byId('muestreo');
+    if(/variable|cualitativ|cuantitativ|nominal|ordinal/.test(q)) return byId('vars');
+    return st.curSub||subtemas[0];
+  }
+  function tutorReply(intent, q){
+    var s = q ? detectSub(q) : (st.curSub||subtemas[0]);
+    var graph = (s.id==='dist') ? normalGraph() : '';
+    if(intent==='explain') addMsg('tutor', s.explain + graph + bookCard(s));
+    else if(intent==='example') addMsg('tutor', s.example + graph);
+    else if(intent==='book') addMsg('tutor','Para <b>'+s.name.toLowerCase()+'</b>, esta es tu referencia dentro del universo de libros del curso:'+bookCard(s));
+    else if(intent==='buzon'){ toast('📥 Pregunta guardada en el buzón del tutor (demo)'); return; }
+    else addMsg('tutor', s.explain + '<br><br>' + s.example + graph + bookCard(s));
+  }
+  document.querySelectorAll('#chat-chips button').forEach(function(b){
+    b.addEventListener('click', function(){
+      var it=b.getAttribute('data-intent');
+      if(it!=='buzon') addMsg('me', b.textContent);
+      setTimeout(function(){ tutorReply(it,null); }, it==='buzon'?0:350);
+    });
+  });
+  function sendChat(){
+    var inp=document.getElementById('chat-input'); var q=inp.value.trim(); if(!q) return;
+    addMsg('me', q); inp.value='';
+    var intent = /ejemplo/i.test(q)?'example' : /libro|leer|referencia|d[oó]nde|profundizar/i.test(q)?'book' : 'auto';
+    setTimeout(function(){ tutorReply(intent, q); }, 400);
+  }
+  document.getElementById('chat-send').addEventListener('click', sendChat);
+  document.getElementById('chat-input').addEventListener('keydown', function(e){ if(e.key==='Enter') sendChat(); });
+
+  /* ---------- DOCENTE ---------- */
+  var students=[
+    {n:'Sofía Ramírez', m:[72,60,55,30,18,45,25,20]}, {n:'Mateo López', m:[90,82,85,60,50,72,55,48]},
+    {n:'Valentina Gómez', m:[55,44,40,20,12,35,22,15]}, {n:'Diego Peña', m:[72,65,68,45,32,60,38,30]},
+    {n:'Camila Torres', m:[95,90,92,80,72,88,75,70]}, {n:'Juan Díaz', m:[32,28,25,15,8,28,12,10]},
+    {n:'Lucía Marín', m:[78,70,74,58,45,65,50,42]}, {n:'Andrés Vega', m:[60,50,52,30,22,45,28,22]},
+    {n:'Paula Ríos', m:[48,40,38,22,14,30,18,14]}, {n:'Tomás Cano', m:[84,78,80,66,55,70,58,52]}
+  ];
+  function cellStyle(v){
+    var col = v>=75?'var(--m-high)': v>=45?'var(--m-mid)':'var(--m-low)';
+    return 'background:color-mix(in srgb,'+col+' 20%, var(--surface)); color:'+ (v>=45?'var(--ink)':'var(--m-low)') +';';
+  }
+  function initials(n){ var p=n.split(' '); return (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase(); }
+  var classRendered=false;
+  function renderClass(){
+    if(classRendered) return; classRendered=true;
+    var thead=document.querySelector('#class-table thead'); var tbody=document.querySelector('#class-table tbody');
+    var th='<tr><th>Estudiante</th>'; subtemas.forEach(function(s){ th+='<th>'+s.short+'</th>'; }); th+='<th>Prom.</th></tr>';
+    thead.innerHTML=th;
+    var rows='';
+    students.forEach(function(st2){
+      var avg=Math.round(st2.m.reduce(function(a,b){return a+b;},0)/st2.m.length);
+      rows+='<tr><td><div class="who2"><div class="av">'+initials(st2.n)+'</div>'+st2.n+'</div></td>';
+      st2.m.forEach(function(v){ rows+='<td><span class="cell" style="'+cellStyle(v)+'">'+v+'</span></td>'; });
+      rows+='<td><b>'+avg+'%</b></td></tr>';
+    });
+    tbody.innerHTML=rows;
+    var risky=students.map(function(st2){ return {n:st2.n, avg:st2.m.reduce(function(a,b){return a+b;},0)/st2.m.length, weak:st2.m}; })
+      .filter(function(x){ return x.avg<40; }).sort(function(a,b){ return a.avg-b.avg; });
+    document.getElementById('d-risk').textContent=risky.length;
+    var list=document.getElementById('risk-list'); list.innerHTML='';
+    risky.forEach(function(x){
+      var wi=x.weak.indexOf(Math.min.apply(null,x.weak)); var sub=subtemas[wi].name;
+      var el=document.createElement('div'); el.className='item';
+      el.innerHTML='<div class="av" style="width:30px;height:30px">'+initials(x.n)+'</div>'+
+        '<div class="txt"><b>'+x.n+'</b><small>Más flojo: '+sub+' · dominio '+Math.round(x.avg)+'%</small></div>'+
+        '<button class="btn sm">Asignar refuerzo</button>';
+      list.appendChild(el);
+    });
+  }
+
+  // Crear curso + XLSX (simulado)
+  document.getElementById('btn-toggle-crear').addEventListener('click', function(){
+    var c=document.getElementById('crear-curso'); c.hidden=!c.hidden;
+    if(!c.hidden) c.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  document.getElementById('xlsx-drop').addEventListener('click', function(){
+    var fake=[['1000000001','Ana Muñoz Pérez','ana_munoz00000@elpoli.edu.co'],['1000000002','Carlos Rendón Gil','carlos_rendon00000@elpoli.edu.co'],
+              ['1000000003','Laura Prieto Soto','laura_prieto00000@elpoli.edu.co'],['1000000004','Óscar Salazar Ruiz','oscar_salazar00000@elpoli.edu.co']];
+    var tb=document.getElementById('xlsx-tbody'); tb.innerHTML='';
+    fake.forEach(function(r){ tb.innerHTML+='<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td class="tag-ok">Notificado ✉️</td></tr>'; });
+    document.getElementById('xlsx-result').hidden=false;
+    toast('📄 listado.xlsx procesado: 4 estudiantes matriculados y notificados (demo)');
+  });
+  document.getElementById('btn-crear-curso').addEventListener('click', function(){
+    toast('✅ Curso privado "Estadística I — Politécnico JIC" creado. Solo los estudiantes del listado tienen acceso (demo)');
+  });
+  document.querySelectorAll('[data-informe]').forEach(function(b){
+    b.addEventListener('click', function(){ toast('🗺️ Roadmap (P2): GuIA leerá el formato institucional y lo llenará con los datos del curso.'); });
+  });
+
+  // Modo clase (Beamer simulado)
+  var slides=[
+    {t:'Estadística descriptiva', b:'Tema 1 · ¿Qué es y para qué sirve?\n\n• Resumir y comunicar datos\n• Tipos de variables\n• Primeras medidas'},
+    {t:'Tendencia central', b:'x̄ = Σxᵢ / n · mediana · moda\n\nEjemplo con las notas del grupo:\n2, 3, 3, 8, 9 → x̄ = 5 · mediana = 3'},
+    {t:'Actividad', b:'Quiz 1 — 10 minutos\n\n• 5 preguntas con rúbrica\n• El tutor IA queda disponible como apoyo\n• El avance se registra por subtema'}
+  ];
+  var si=0;
+  function renderSlide(){
+    document.getElementById('sl-title').textContent=slides[si].t;
+    document.getElementById('sl-body').textContent=slides[si].b;
+    document.getElementById('sl-cnt').textContent=(si+1)+' / '+slides.length;
+    var c=document.getElementById('sl-canvas');
+    if(c && c.width) c.getContext('2d').clearRect(0,0,c.width,c.height);
+  }
+  document.getElementById('btn-clase').addEventListener('click', function(){ si=0; renderSlide(); document.getElementById('beamer').hidden=false; });
+  document.getElementById('beamer-close').addEventListener('click', function(){ document.getElementById('beamer').hidden=true; });
+  document.getElementById('sl-prev').addEventListener('click', function(){ si=Math.max(0,si-1); renderSlide(); });
+  document.getElementById('sl-next').addEventListener('click', function(){ si=Math.min(slides.length-1,si+1); renderSlide(); });
+
+  /* ---------- ADMIN ---------- */
+  var users=[
+    ['Sofía Ramírez','est','Activo','Hace 2 min'],['Prof. Javier','prof','Activo','Hace 10 min'],
+    ['Mateo López','est','Activo','Hace 1 h'],['Valentina Gómez','est','Inactivo','Hace 3 d'],
+    ['Admin Central','adm','Activo','Hace 5 h'],['Prof. Salinas','prof','Activo','Ayer'],
+    ['Juan Díaz','est','Activo','Hace 20 min']
+  ];
+  var roleMap={est:['Estudiante','b-est'], prof:['Profesor','b-prof'], adm:['Admin','b-adm']};
+  var usersRendered=false;
+  function renderUsers(){
+    if(usersRendered) return; usersRendered=true;
+    var tb=document.querySelector('#users-table tbody'); var rows='';
+    users.forEach(function(u){ var r=roleMap[u[1]];
+      var estado = u[2]==='Activo'?'<span class="tag-ok">●</span> '+u[2] : '<span style="color:var(--ink-3)">○</span> '+u[2];
+      rows+='<tr><td><div class="who2"><div class="av">'+initials(u[0].replace('Prof. ','').replace('Admin ',''))+'</div>'+u[0]+'</div></td>'+
+        '<td><span class="badge-role '+r[1]+'">'+r[0]+'</span></td><td>'+estado+'</td><td style="color:var(--ink-3)">'+u[3]+'</td></tr>';
+    });
+    tb.innerHTML=rows;
+  }
+
+  /* ---------- EVALUACIÓN: tabs, quiz, OCR, proctoring ---------- */
+  document.querySelectorAll('#etabs button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#etabs button').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      ['quiz','taller','examen'].forEach(function(k){ document.getElementById('et-'+k).hidden = (k!==b.getAttribute('data-et')); });
+    });
+  });
+  var qAnswered=false;
+  document.querySelectorAll('#q1 .opt').forEach(function(o,i){
+    o.addEventListener('click', function(){
+      if(qAnswered) return; qAnswered=true;
+      document.querySelectorAll('#q1 .opt').forEach(function(x,k){ x.disabled=true;
+        if(k===1) x.classList.add('correct'); else if(k===i) x.classList.add('wrong'); else x.classList.add('dim'); });
+      document.getElementById('q1-result').hidden=false;
+      toast(i===1?'✅ Quiz calificado con rúbrica: 100/100':'📊 Quiz calificado con rúbrica: 60/100 — revisa la retroalimentación');
+    });
+  });
+  document.getElementById('btn-ocr').addEventListener('click', function(){
+    var box=document.getElementById('ocr-box');
+    box.hidden=false; box.innerHTML='🔍 Interpretando tu solución con OCR…';
+    setTimeout(function(){
+      box.innerHTML='<div><b>Texto reconocido en tu foto:</b>'+
+        '<div class="math" style="margin-top:8px">x̄ = (4 + 6 + 11) / 3 = 7 &nbsp;·&nbsp; s² = Σ(xᵢ − x̄)² / (n−1) = 13</div>'+
+        '<table style="margin-top:12px; width:100%"><thead><tr><th>Criterio</th><th>Puntos</th></tr></thead>'+
+        '<tbody><tr><td>Planteamiento</td><td>30/30 ✓</td></tr><tr><td>Procedimiento</td><td>28/30</td></tr>'+
+        '<tr><td>Resultado</td><td>20/20 ✓</td></tr><tr><td>Presentación</td><td>15/20</td></tr>'+
+        '<tr><td><b>Total</b></td><td><b>93/100</b></td></tr></tbody></table></div>';
+      toast('🤖 OCR + calificación automática contra rúbrica (simulación · visión P2)');
+    }, 1400);
+  });
+  var checksDone=false;
+  document.getElementById('btn-check').addEventListener('click', function(){
+    if(checksDone) return;
+    var items=document.querySelectorAll('#check-list .check');
+    var i=0;
+    (function next(){
+      if(i>0){ items[i-1].classList.remove('run'); items[i-1].classList.add('ok'); items[i-1].querySelector('.dot').textContent='✓'; }
+      if(i>=items.length){ checksDone=true; document.getElementById('btn-examen').disabled=false;
+        document.getElementById('cam-txt').innerHTML='✅ Entorno verificado<br><small>identidad confirmada · distancia adecuada · escritorio visible</small>';
+        toast('✅ Verificación completa: ya puedes comenzar el examen'); return; }
+      items[i].classList.add('run'); i++; setTimeout(next, 650);
+    })();
+  });
+  document.getElementById('btn-examen').addEventListener('click', function(){
+    toast('📝 Examen iniciado · proctoring activo (simulación · visión P2)');
+  });
+
+  /* ---------- AVATAR con buzón ---------- */
+  var avScript=[
+    {board:'📊 <b>Tendencia central</b><span class="chalk-math">x̄ = Σxᵢ / n</span>', say:'La media es el punto de equilibrio de los datos: suma todos los valores y divide entre n.'},
+    {board:'Datos: 2, 3, 3, 8, 9<span class="chalk-math">x̄ = 5 · mediana = 3 · moda = 3</span>', say:'¿Ves? La media subió a 5 por culpa del 8 y el 9… pero la mediana se queda tranquila en 3.'},
+    {board:'⚖️ ¿Cuál usar?<span class="chalk-math">hay extremos → mediana · simetría → media</span>', say:'Si hay valores extremos, confía en la mediana. ¿Dudas? Interrúmpeme o deja tu pregunta en el buzón y la respondo al final.'}
+  ];
+  var avI=0, buzon=[];
+  function avRender(){
+    document.getElementById('bb-text').innerHTML=avScript[avI].board;
+    document.getElementById('bubble').innerHTML='🗣️ '+avScript[avI].say;
+  }
+  document.getElementById('btn-avanzar').addEventListener('click', function(){
+    avI=(avI+1)%avScript.length; avRender();
+    if(avI===0 && buzon.length) toast('🔔 Fin de la explicación: hay '+buzon.length+' pregunta(s) en el buzón');
+  });
+  function askInline(mode){
+    var bubble=document.getElementById('bubble');
+    bubble.innerHTML=(mode==='int'?'⏸️ Pausé la explicación. ':'')+'Escribe tu pregunta:'+
+      '<div style="display:flex; gap:8px; margin-top:8px"><input id="av-q" style="flex:1; font:inherit; padding:8px 10px; border-radius:9px; border:1.5px solid var(--line); background:var(--surface); color:var(--ink)">'+
+      '<button class="btn sm primary" id="av-send">Enviar</button></div>';
+    document.getElementById('av-send').addEventListener('click', function(){
+      var q=(document.getElementById('av-q').value||'').trim(); if(!q) return;
+      if(mode==='int'){
+        var s=detectSub(q);
+        bubble.innerHTML='🗣️ ¡Buena pregunta! '+s.explain+'<br><br><i>…y ahora sigamos con la clase.</i>';
+      } else {
+        buzon.push(q); renderBuzon(); toast('📥 Guardada en el buzón — la respondo al terminar');
+        avRender();
+      }
+    });
+    document.getElementById('av-q').focus();
+  }
+  function renderBuzon(){
+    var l=document.getElementById('buzon-list'); l.innerHTML='';
+    if(!buzon.length){ l.innerHTML='<div class="buzon-item" style="border-style:solid; color:var(--ink-3)">Aún no hay preguntas…</div>'; return; }
+    buzon.forEach(function(q,i){ l.innerHTML+='<div class="buzon-item">'+(i+1)+'. '+q+'</div>'; });
+  }
+  document.getElementById('btn-interr').addEventListener('click', function(){ askInline('int'); });
+  document.getElementById('btn-buzon2').addEventListener('click', function(){ askInline('buz'); });
+  document.getElementById('btn-responder').addEventListener('click', function(){
+    if(!buzon.length){ toast('El buzón está vacío — ¡todo claro! 🎉'); return; }
+    var q=buzon.shift(); renderBuzon();
+    var s=detectSub(q);
+    document.getElementById('bubble').innerHTML='🗣️ Del buzón: «'+q+'» → '+s.explain;
+  });
+  avRender();
+
+  /* ---------- Rayar sobre la diapositiva ---------- */
+  var cv=document.getElementById('sl-canvas'), cctx=null, drawing=false;
+  document.getElementById('sl-rayar').addEventListener('click', function(){
+    var slide=document.querySelector('#beamer .slide');
+    slide.classList.toggle('rayando');
+    if(slide.classList.contains('rayando')){
+      cv.width=slide.clientWidth; cv.height=slide.clientHeight;
+      cctx=cv.getContext('2d'); cctx.lineWidth=3; cctx.lineCap='round'; cctx.strokeStyle='#FF6B5B';
+      toast('✏️ Modo rayar activo — dibuja sobre la diapositiva');
+    } else {
+      toast('✏️ Modo rayar desactivado');
+    }
+  });
+  cv.addEventListener('pointerdown', function(e){ if(!cctx) return; drawing=true; cctx.beginPath(); cctx.moveTo(e.offsetX,e.offsetY); });
+  cv.addEventListener('pointermove', function(e){ if(drawing && cctx){ cctx.lineTo(e.offsetX,e.offsetY); cctx.stroke(); } });
+  window.addEventListener('pointerup', function(){ drawing=false; });
+
+  show('landing');
+})();
+</script>
