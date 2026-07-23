@@ -1,0 +1,72 @@
+/* GuIA — tokens de diseño (portados del prototipo v2.3 aprobado) */
+:root {
+  --paper: #eef1f7;
+  --surface: #ffffff;
+  --surface-2: #f4f6fb;
+  --ink: #141826;
+  --ink-2: #4a5266;
+  --ink-3: #828ba0;
+  --line: #e1e6f0;
+  --line-strong: #ced5e4;
+  --brand: #0fb5a6;
+  --brand-ink: #0b857a;
+  --brand-soft: #dbf3f0;
+  --warm: #ff6b5b;
+  --warm-soft: #ffe6e2;
+  --gold: #e8a93c;
+  --m-low: #f0705a;
+  --m-mid: #f2b33d;
+  --m-high: #17be9c;
+  --grid: rgba(20, 24, 38, 0.045);
+  --shadow: 0 1px 2px rgba(20, 24, 38, 0.05), 0 8px 24px rgba(20, 24, 38, 0.06);
+  --radius: 18px;
+  --font-display: ui-rounded, 'SF Pro Rounded', 'Segoe UI', system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0b0e15;
+    --surface: #141926;
+    --surface-2: #1a2030;
+    --ink: #eaedf5;
+    --ink-2: #a7afc2;
+    --ink-3: #6e7688;
+    --line: #252c3c;
+    --line-strong: #333c50;
+    --brand: #25d6c2;
+    --brand-ink: #25d6c2;
+    --brand-soft: #0e2e2c;
+    --warm: #ff7d6e;
+    --warm-soft: #2e1613;
+    --gold: #f0bc5e;
+    --m-low: #f47c68;
+    --m-mid: #f5be55;
+    --m-high: #26d2ae;
+    --grid: rgba(255, 255, 255, 0.05);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+.wrap {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 14px clamp(14px, 3vw, 28px) 48px;
+}
