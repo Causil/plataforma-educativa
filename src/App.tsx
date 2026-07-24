@@ -4,6 +4,7 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Curso from './pages/Curso';
 import Practica from './pages/Practica';
+import Docente from './pages/Docente';
 import Stub from './pages/Stub';
 
 export default function App() {
@@ -15,7 +16,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/curso" element={<Curso />} />
           <Route path="/practica" element={<Practica />} />
-          <Route path="/docente" element={<Stub title="Panel docente" epic="E9" />} />
+          <Route path="/docente" element={<Docente />} />
           <Route path="/admin" element={<Stub title="Administración" epic="E10" />} />
           <Route path="*" element={<Landing />} />
         </Routes>
