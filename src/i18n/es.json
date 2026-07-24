@@ -1,0 +1,36 @@
+{
+  "app": { "name": "GuIA", "tagline": "Plataforma de cursos adaptativos con IA" },
+  "landing": {
+    "badge": "Hackathon Código Facilito · Kiro + AWS",
+    "title": "Cursos que se adaptan a cada estudiante",
+    "subtitle": "GuIA construye una ruta de aprendizaje que cambia en tiempo real con cada respuesta, y un tutor IA que explica con ejemplos y te dice en qué libro, capítulo y página profundizar. Empezamos con Estadística.",
+    "ctaCourse": "Explorar curso de Estadística",
+    "ctaLogin": "Iniciar sesión",
+    "step1t": "Diagnóstico por niveles",
+    "step1d": "Preguntas de nivel básico, intermedio y avanzado estiman tu punto de partida real.",
+    "step2t": "Ruta que se adapta",
+    "step2d": "El motor recalcula tu dominio tras cada respuesta y elige el siguiente reto ideal.",
+    "step3t": "Tutor IA con bibliografía",
+    "step3d": "Pregunta lo que quieras: ejemplos, explicaciones y referencias exactas a libros."
+  },
+  "login": {
+    "title": "Inicia sesión en GuIA",
+    "subtitle": "Elige tu rol para continuar",
+    "student": "Estudiante",
+    "teacher": "Profesor",
+    "admin": "Administrador",
+    "email": "Correo",
+    "password": "Contraseña",
+    "enter": "Entrar"
+  },
+  "practice": {
+    "nextChallenge": "Tu siguiente reto",
+    "askHint": "💡 Pedir pista",
+    "next": "Siguiente reto →",
+    "correct": "¡Correcto! +{{points}} pts",
+    "wrong": "Casi. Mira la pista y sigue.",
+    "masteryMap": "Mapa de dominio",
+    "route": "Ruta adaptativa",
+    "routeEmpty": "Responde tu primer reto y verás cómo GuIA ajusta tu ruta. ↑"
+  }
+}

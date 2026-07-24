@@ -12,11 +12,8 @@ import {
   type TutorContext,
 } from './prompts';
 
-export interface TutorAnswer {
-  text: string;
-  /** 'ai' = respuesta del modelo · 'fallback' = respaldo local. */
-  source: 'ai' | 'fallback';
-}
+export type { TutorAnswer } from './answer';
+import type { TutorAnswer } from './answer';
 
 const DEFAULT_TIMEOUT_MS = 8_000;
 
