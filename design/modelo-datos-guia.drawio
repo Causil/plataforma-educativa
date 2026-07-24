@@ -1,0 +1,153 @@
+<mxfile host="app.diagrams.net" modified="2026-07-24T00:00:00.000Z" agent="GuIA" version="24.0.0">
+  <diagram id="modelo-guia" name="Modelo de datos GuIA">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1050" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===== Etiquetas de banda ===== -->
+        <mxCell id="lbl1" value="JERARQUÍA ACADÉMICA (del programa FD-GC70)" style="text;html=1;fontSize=14;fontStyle=1;fontColor=#0B857A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="420" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl2" value="ACCESO Y MATRÍCULA (cursos privados 🔒)" style="text;html=1;fontSize=14;fontStyle=1;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="320" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl3" value="PROGRESO DEL ESTUDIANTE (owner-only)" style="text;html=1;fontSize=14;fontStyle=1;fontColor=#B8860B;" vertex="1" parent="1">
+          <mxGeometry x="600" y="360" width="320" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl4" value="ANALÍTICA Y EVALUACIÓN (P1)" style="text;html=1;fontSize=14;fontStyle=1;fontColor=#C0392B;" vertex="1" parent="1">
+          <mxGeometry x="40" y="790" width="320" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ===== JERARQUÍA ACADÉMICA (teal) ===== -->
+        <mxCell id="course" value="📘 Course" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#DBF3F0;strokeColor=#0B857A;fontColor=#083A35;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="40" y="130" width="230" height="186" as="geometry" />
+        </mxCell>
+        <mxCell id="course_f1" value="code (PK) — ej. CBS00074" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="course"><mxGeometry y="30" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="course_f2" value="name · institution" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="course"><mxGeometry y="56" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="course_f3" value="visibility: public | private 🔒" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontStyle=1" vertex="1" parent="course"><mxGeometry y="82" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="course_f4" value="credits" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="course"><mxGeometry y="108" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="course_f5" value="teacherId (FK → Student/Cognito)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="course"><mxGeometry y="134" width="230" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="unit" value="📗 Unit (×6)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#DBF3F0;strokeColor=#0B857A;fontColor=#083A35;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="330" y="130" width="200" height="134" as="geometry" />
+        </mxCell>
+        <mxCell id="unit_f1" value="id (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="unit"><mxGeometry y="30" width="200" height="26" as="geometry" /></mxCell>
+        <mxCell id="unit_f2" value="courseId (FK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="unit"><mxGeometry y="56" width="200" height="26" as="geometry" /></mxCell>
+        <mxCell id="unit_f3" value="order · title" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="unit"><mxGeometry y="82" width="200" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="subtopic" value="📙 Subtopic (×8)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#DBF3F0;strokeColor=#0B857A;fontColor=#083A35;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="600" y="130" width="240" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="subtopic_f1" value="id (PK) · unitId (FK) · order" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="subtopic"><mxGeometry y="30" width="240" height="26" as="geometry" /></mxCell>
+        <mxCell id="subtopic_f2" value="name · short" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="subtopic"><mxGeometry y="56" width="240" height="26" as="geometry" /></mxCell>
+        <mxCell id="subtopic_f3" value="bookRefs [json] 📖 (R10)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontStyle=1" vertex="1" parent="subtopic"><mxGeometry y="82" width="240" height="26" as="geometry" /></mxCell>
+        <mxCell id="subtopic_f4" value="&#160;&#160;&#160;{title, chapter, page}" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontColor=#777777" vertex="1" parent="subtopic"><mxGeometry y="108" width="240" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="exercise" value="📝 Exercise (banco)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#DBF3F0;strokeColor=#0B857A;fontColor=#083A35;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="910" y="130" width="260" height="212" as="geometry" />
+        </mxCell>
+        <mxCell id="exercise_f1" value="id (PK) · subtopicId (FK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="exercise"><mxGeometry y="30" width="260" height="26" as="geometry" /></mxCell>
+        <mxCell id="exercise_f2" value="level: básico|intermedio|avanzado" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="exercise"><mxGeometry y="56" width="260" height="26" as="geometry" /></mxCell>
+        <mxCell id="exercise_f3" value="difficulty (1–5)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="exercise"><mxGeometry y="82" width="260" height="26" as="geometry" /></mxCell>
+        <mxCell id="exercise_f4" value="prompt (LaTeX) · options[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="exercise"><mxGeometry y="108" width="260" height="26" as="geometry" /></mxCell>
+        <mxCell id="exercise_f5" value="answerIndex 🔐 solo Lambda" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontStyle=1;fontColor=#C0392B" vertex="1" parent="exercise"><mxGeometry y="134" width="260" height="26" as="geometry" /></mxCell>
+        <mxCell id="exercise_f6" value="hint · explanation 🔐 solo Lambda" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontStyle=1;fontColor=#C0392B" vertex="1" parent="exercise"><mxGeometry y="160" width="260" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="activity" value="🧪 Activity" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#DBF3F0;strokeColor=#0B857A;fontColor=#083A35;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="330" y="400" width="230" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="activity_f1" value="id (PK) · unitId (FK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="activity"><mxGeometry y="30" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="activity_f2" value="type: quiz | taller | examen" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="activity"><mxGeometry y="56" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="activity_f3" value="rubric [{criterion, weight}] (R13)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontStyle=1" vertex="1" parent="activity"><mxGeometry y="82" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="activity_f4" value="unlockThreshold (0.6)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="activity"><mxGeometry y="108" width="230" height="26" as="geometry" /></mxCell>
+
+        <!-- ===== ACCESO (gris) ===== -->
+        <mxCell id="student" value="👤 Student (Cognito User Pool)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#F4F6FB;strokeColor=#666666;fontColor=#333333;fontSize=13;dashed=1;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="230" height="134" as="geometry" />
+        </mxCell>
+        <mxCell id="student_f1" value="sub (PK) · email" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="student"><mxGeometry y="30" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="student_f2" value="grupo: students|teachers|admins" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="student"><mxGeometry y="56" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="student_f3" value="(primer ingreso: NEW_PASSWORD)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontColor=#777777" vertex="1" parent="student"><mxGeometry y="82" width="230" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="enrollment" value="🔑 Enrollment (llave de acceso)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#F4F6FB;strokeColor=#666666;fontColor=#333333;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="40" y="400" width="230" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="enroll_f1" value="courseId (FK) · studentId (FK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="enrollment"><mxGeometry y="30" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="enroll_f2" value="document (cédula del XLSX)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontStyle=1" vertex="1" parent="enrollment"><mxGeometry y="56" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="enroll_f3" value="source: xlsx | self" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="enrollment"><mxGeometry y="82" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="enroll_f4" value="status" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="enrollment"><mxGeometry y="108" width="230" height="26" as="geometry" /></mxCell>
+
+        <!-- ===== PROGRESO (ámbar) ===== -->
+        <mxCell id="mastery" value="🎯 MasteryState" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#FDF3DC;strokeColor=#E8A93C;fontColor=#6B4E00;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="600" y="400" width="230" height="134" as="geometry" />
+        </mxCell>
+        <mxCell id="mastery_f1" value="studentId + subtopicId (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="mastery"><mxGeometry y="30" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="mastery_f2" value="mastery (0–1, motor Elo)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontStyle=1" vertex="1" parent="mastery"><mxGeometry y="56" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="mastery_f3" value="consecutiveFails" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="mastery"><mxGeometry y="82" width="230" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="routelog" value="🗺️ RouteLog (ruta explicable)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#FDF3DC;strokeColor=#E8A93C;fontColor=#6B4E00;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="910" y="400" width="260" height="186" as="geometry" />
+        </mxCell>
+        <mxCell id="route_f1" value="studentId · step (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="routelog"><mxGeometry y="30" width="260" height="26" as="geometry" /></mxCell>
+        <mxCell id="route_f2" value="subtopicId · difficulty · ok" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="routelog"><mxGeometry y="56" width="260" height="26" as="geometry" /></mxCell>
+        <mxCell id="route_f3" value="masteryBefore → masteryAfter" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="routelog"><mxGeometry y="82" width="260" height="26" as="geometry" /></mxCell>
+        <mxCell id="route_f4" value="reason (motivo legible) ⭐ R06" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontStyle=1" vertex="1" parent="routelog"><mxGeometry y="108" width="260" height="26" as="geometry" /></mxCell>
+        <mxCell id="route_f5" value="ts" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="routelog"><mxGeometry y="134" width="260" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="gamestate" value="🏅 GameState (R22)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#FDF3DC;strokeColor=#E8A93C;fontColor=#6B4E00;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="600" y="580" width="230" height="134" as="geometry" />
+        </mxCell>
+        <mxCell id="game_f1" value="studentId (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="gamestate"><mxGeometry y="30" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="game_f2" value="xp · level · streak" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="gamestate"><mxGeometry y="56" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="game_f3" value="badges[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="gamestate"><mxGeometry y="82" width="230" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="submission" value="📤 Submission" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#FDF3DC;strokeColor=#E8A93C;fontColor=#6B4E00;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="330" y="620" width="230" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="sub_f1" value="id (PK) · activityId (FK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="submission"><mxGeometry y="30" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="sub_f2" value="studentId · answers [json]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="submission"><mxGeometry y="56" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="sub_f3" value="score · rubricScores [json]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="submission"><mxGeometry y="82" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="sub_f4" value="ocrText? (P2 — foto en papel)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontColor=#777777" vertex="1" parent="submission"><mxGeometry y="108" width="230" height="26" as="geometry" /></mxCell>
+
+        <!-- ===== ANALÍTICA (coral) ===== -->
+        <mxCell id="usage" value="📈 UsageEvent (R03 · P1)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#FFE6E2;strokeColor=#FF6B5B;fontColor=#7A2A20;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="40" y="830" width="230" height="134" as="geometry" />
+        </mxCell>
+        <mxCell id="usage_f1" value="studentId · ts (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="usage"><mxGeometry y="30" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="usage_f2" value="type: login|view|practice" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="usage"><mxGeometry y="56" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="usage_f3" value="route · duration" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="usage"><mxGeometry y="82" width="230" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="attendance" value="📋 Attendance (formato Poli · P1)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#FFE6E2;strokeColor=#FF6B5B;fontColor=#7A2A20;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="330" y="830" width="240" height="134" as="geometry" />
+        </mxCell>
+        <mxCell id="att_f1" value="courseId · sessionDate (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="attendance"><mxGeometry y="30" width="240" height="26" as="geometry" /></mxCell>
+        <mxCell id="att_f2" value="studentId · present (SI/NO)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="attendance"><mxGeometry y="56" width="240" height="26" as="geometry" /></mxCell>
+        <mxCell id="att_f3" value="→ exportable al xlsx oficial" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontColor=#777777" vertex="1" parent="attendance"><mxGeometry y="82" width="240" height="26" as="geometry" /></mxCell>
+
+        <mxCell id="courseeval" value="⭐ CourseEvaluation (R16 · P1)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#FFE6E2;strokeColor=#FF6B5B;fontColor=#7A2A20;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="630" y="830" width="240" height="134" as="geometry" />
+        </mxCell>
+        <mxCell id="ceval_f1" value="courseId · studentId (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="courseeval"><mxGeometry y="30" width="240" height="26" as="geometry" /></mxCell>
+        <mxCell id="ceval_f2" value="ratings [json] · comment" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="courseeval"><mxGeometry y="56" width="240" height="26" as="geometry" /></mxCell>
+
+        <!-- ===== RELACIONES ===== -->
+        <mxCell id="e1" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#0B857A;" edge="1" parent="1" source="course" target="unit"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#0B857A;" edge="1" parent="1" source="unit" target="subtopic"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#0B857A;" edge="1" parent="1" source="subtopic" target="exercise"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#0B857A;" edge="1" parent="1" source="unit" target="activity"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#666666;" edge="1" parent="1" source="course" target="enrollment"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#666666;" edge="1" parent="1" source="student" target="enrollment"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" value="1:N (owner)" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#E8A93C;" edge="1" parent="1" source="student" target="mastery"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e8" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#E8A93C;" edge="1" parent="1" source="subtopic" target="mastery"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e9" value="1:N (owner)" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#E8A93C;" edge="1" parent="1" source="student" target="routelog"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e10" value="1:1" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERone;strokeColor=#E8A93C;" edge="1" parent="1" source="student" target="gamestate"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e11" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#E8A93C;" edge="1" parent="1" source="activity" target="submission"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e12" value="1:N (owner)" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#E8A93C;" edge="1" parent="1" source="student" target="submission"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e13" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#FF6B5B;" edge="1" parent="1" source="student" target="usage"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e14" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#FF6B5B;" edge="1" parent="1" source="course" target="attendance"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e15" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;fontSize=10;startArrow=ERone;endArrow=ERmany;strokeColor=#FF6B5B;" edge="1" parent="1" source="course" target="courseeval"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
