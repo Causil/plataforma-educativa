@@ -28,7 +28,9 @@ amplify/
 - `Enrollment{ courseId, studentId, document, source }`
 - `MasteryState{ studentId, subtopicId, mastery, consecutiveFails }` (owner)
 - `RouteLog{ studentId, step, subtopicId, difficulty, ok, masteryBefore, masteryAfter, reason }` (owner)
-- `GameState{ studentId, xp, level, streak }` (owner)
+- `GameState{ studentId, scope: 'global'|courseId, xp, level, streak, badges }` (owner)
+  → doble ámbito: submit-answer hace 2 upserts (scope='global' Y scope=courseId).
+  El estudiante ve nivel global; el ranking del grupo del profesor consulta scope=courseId.
 - `Submission{ activityId, studentId, answers: json, score, rubricScores: json }` (owner)
 
 ## Functions

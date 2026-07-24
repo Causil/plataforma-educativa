@@ -79,7 +79,7 @@ flowchart LR
 | `UsageEvent` | studentId, type (login/view/practice), route, duration, ts | analítica R03 |
 | `Attendance` | courseId, sessionDate, studentId, present | asistencia (formato Poli) |
 | `CourseEvaluation` | courseId, studentId, ratings{contenido, tutor, plataforma, evaluaciones}, comment | R16 |
-| `GameState` | studentId, xp, level, badges[], streak | R22 |
+| `GameState` | studentId (PK) + **scope (SK: 'global' \| courseId)**, xp, level, streak, badges[] | R22 — doble ámbito: nivel global (motivación transversal) + puntos por curso (ranking del grupo). 2 upserts por respuesta, costo despreciable |
 
 ## 6. Lambdas / API (AppSync mutations & queries)
 

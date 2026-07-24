@@ -98,9 +98,10 @@
         <mxCell id="gamestate" value="🏅 GameState (R22)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#FDF3DC;strokeColor=#E8A93C;fontColor=#6B4E00;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
           <mxGeometry x="600" y="580" width="230" height="134" as="geometry" />
         </mxCell>
-        <mxCell id="game_f1" value="studentId (PK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="gamestate"><mxGeometry y="30" width="230" height="26" as="geometry" /></mxCell>
-        <mxCell id="game_f2" value="xp · level · streak" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="gamestate"><mxGeometry y="56" width="230" height="26" as="geometry" /></mxCell>
-        <mxCell id="game_f3" value="badges[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="gamestate"><mxGeometry y="82" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="game_f1" value="studentId (PK) + scope (SK)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;fontStyle=1" vertex="1" parent="gamestate"><mxGeometry y="30" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="game_f1b" value="scope: &#39;global&#39; | courseId 🏆" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="gamestate"><mxGeometry y="56" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="game_f2" value="xp · level · streak" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="gamestate"><mxGeometry y="82" width="230" height="26" as="geometry" /></mxCell>
+        <mxCell id="game_f3" value="badges[]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;fontSize=11;" vertex="1" parent="gamestate"><mxGeometry y="108" width="230" height="26" as="geometry" /></mxCell>
 
         <mxCell id="submission" value="📤 Submission" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;collapsible=0;rounded=1;arcSize=4;fillColor=#FDF3DC;strokeColor=#E8A93C;fontColor=#6B4E00;fontSize=13;swimlaneFillColor=#FFFFFF;" vertex="1" parent="1">
           <mxGeometry x="330" y="620" width="230" height="160" as="geometry" />
