@@ -34,8 +34,8 @@ export default function Landing() {
           <button className="btn primary" onClick={() => nav('/curso')}>
             {t('landing.ctaCourse')}
           </button>
-          <button className="btn" onClick={() => nav('/practica')}>
-            Probar la práctica adaptativa
+          <button className="btn" onClick={() => nav('/diagnostico')}>
+            Hacer el diagnóstico
           </button>
         </div>
       </section>

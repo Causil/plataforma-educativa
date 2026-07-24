@@ -29,8 +29,11 @@ interface PracticeApi {
   stats: { done: number; correct: number; streak: number; xp: number; level: number };
   route: RouteStep[];
   current: Current | null;
+  diagnosticDone: boolean;
   next: () => void;
   answer: (optionIndex: number) => boolean;
+  /** Aplica el resultado del diagnóstico: dominio inicial por subtema (US-02). */
+  applyDiagnostic: (results: Record<string, { correct: number; total: number }>) => void;
 }
 
 const Ctx = createContext<PracticeApi | null>(null);
@@ -46,6 +49,7 @@ export function PracticeProvider({ children }: { children: ReactNode }) {
   const [stats, setStats] = useState({ done: 0, correct: 0, streak: 0, xp: 0, level: 1 });
   const [route, setRoute] = useState<RouteStep[]>([]);
   const [current, setCurrent] = useState<Current | null>(null);
+  const [diagnosticDone, setDiagnosticDone] = useState(false);
 
   const api = useMemo<PracticeApi>(() => {
     const states = (): SubtopicState[] =>
@@ -101,8 +105,23 @@ export function PracticeProvider({ children }: { children: ReactNode }) {
       return ok;
     };
 
-    return { mastery, fails, stats, route, current, next, answer };
-  }, [mastery, fails, bankIdx, stats, route, current]);
+    const applyDiagnostic = (results: Record<string, { correct: number; total: number }>) => {
+      setMastery((m) => {
+        const updated = { ...m };
+        for (const [subId, r] of Object.entries(results)) {
+          if (r.total > 0) {
+            // Heurística del diagnóstico (US-02): base 0.22 + 0.6 × tasa de acierto
+            updated[subId] = Math.min(0.9, Math.max(0.12, 0.22 + 0.6 * (r.correct / r.total)));
+          }
+        }
+        return updated;
+      });
+      setCurrent(null); // la próxima práctica se selecciona con el dominio nuevo
+      setDiagnosticDone(true);
+    };
+
+    return { mastery, fails, stats, route, current, diagnosticDone, next, answer, applyDiagnostic };
+  }, [mastery, fails, bankIdx, stats, route, current, diagnosticDone]);
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
 }
