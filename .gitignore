@@ -15,3 +15,8 @@ amplify_outputs.json
 # Sistema
 .DS_Store
 Thumbs.db
+
+# 🔐 Credenciales AWS — NUNCA subir
+usuario_administrador_aws_guia/
+*accessKeys*.csv
+*_credentials*.csv
