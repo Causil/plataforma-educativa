@@ -5,6 +5,11 @@
 - **Backend objetivo:** AWS **Amplify Gen2** (Auth=Cognito, Data=AppSync+DynamoDB, Functions=Lambda, Hosting). Región: **us-east-1**.
 - **IA:** Amazon Bedrock — Haiku (`anthropic.claude-haiku-4-5`) para pistas/chat, Sonnet (`anthropic.claude-sonnet-5`) para explicaciones. Solo bajo demanda, siempre con fallback local.
 
+## ⚠️ Cuenta AWS — REGLA CRÍTICA
+Esta máquina tiene credenciales del TRABAJO de Javier en el perfil default (cuenta 469738742286, usuario sit-*). **PROHIBIDO usarlas.** Todo comando AWS de este proyecto usa el perfil personal `guia`:
+- `npx ampx sandbox --profile guia` (o `export AWS_PROFILE=guia` en la terminal de trabajo)
+- Antes de cualquier despliegue, verificar: `aws sts get-caller-identity --profile guia` NO debe mostrar la cuenta 469738742286.
+
 ## Comandos
 - `npm run dev` — dev server (usa polling por límite de inotify de esta máquina)
 - `npm test` — vitest (DEBE quedar en verde antes de cada commit)

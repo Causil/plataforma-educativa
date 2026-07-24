@@ -1,7 +1,9 @@
 # Spec: aws-backend — Tareas
 
-> Prerequisito: AWS CLI configurado (`aws configure`) y Bedrock model access
-> aprobado para Claude Haiku/Sonnet en us-east-1 (T-002 del plan general).
+> Prerequisito: perfil AWS PERSONAL `guia` configurado (`aws configure --profile guia`)
+> y Bedrock model access aprobado para Claude Haiku/Sonnet en us-east-1 (T-002).
+> ⚠️ NUNCA usar el perfil default (credenciales del trabajo — ver steering/tech.md).
+> Todo comando ampx lleva `--profile guia`.
 > Tras CADA tarea: `npm test` y `npm run build` deben quedar en verde.
 
 - [ ] 1. Inicializar Amplify Gen2 en el repo (`npm create amplify@latest`), estructura `amplify/` con backend.ts vacío funcional; `npx ampx sandbox` levanta. *(Req 5; T-201)*
