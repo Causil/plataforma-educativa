@@ -3,7 +3,9 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        # npm install (no ci): los constructs internos de amplify pinnean
+        # @opentelemetry exacto y rompen la validación estricta de npm ci
+        - npm install --no-audit --no-fund
     build:
       commands:
         - npm run test
