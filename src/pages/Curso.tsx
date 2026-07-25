@@ -113,7 +113,11 @@ export default function Curso() {
                   <b>Actividad evaluativa</b>
                   <small>{ACTIVITIES[u.id]}</small>
                 </div>
-                <button className={`btn sm ${unlocked ? 'primary' : ''}`} disabled={!unlocked}>
+                <button
+                  className={`btn sm ${unlocked ? 'primary' : ''}`}
+                  disabled={!unlocked}
+                  onClick={() => nav('/evaluacion')}
+                >
                   {unlocked ? 'Comenzar' : 'Se desbloquea al 60%'}
                 </button>
               </div>

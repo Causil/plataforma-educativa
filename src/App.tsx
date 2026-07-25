@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Curso from './pages/Curso';
 import Diagnostico from './pages/Diagnostico';
 import Practica from './pages/Practica';
+import Evaluacion from './pages/Evaluacion';
 import Docente from './pages/Docente';
 import Stub from './pages/Stub';
 
@@ -29,6 +30,10 @@ export default function App() {
             <Route
               path="/practica"
               element={<RequireRole allow={['est', 'prof', 'adm']}><Practica /></RequireRole>}
+            />
+            <Route
+              path="/evaluacion"
+              element={<RequireRole allow={['est', 'prof', 'adm']}><Evaluacion /></RequireRole>}
             />
             <Route
               path="/docente"
