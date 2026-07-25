@@ -9,7 +9,7 @@ import Diagnostico from './pages/Diagnostico';
 import Practica from './pages/Practica';
 import Evaluacion from './pages/Evaluacion';
 import Docente from './pages/Docente';
-import Stub from './pages/Stub';
+import Admin from './pages/Admin';
 
 export default function App() {
   return (
@@ -41,7 +41,7 @@ export default function App() {
             />
             <Route
               path="/admin"
-              element={<RequireRole allow={['adm']}><Stub title="Administración" epic="E10" /></RequireRole>}
+              element={<RequireRole allow={['adm']}><Admin /></RequireRole>}
             />
             <Route path="*" element={<Landing />} />
           </Routes>
