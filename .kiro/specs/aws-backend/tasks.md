@@ -18,7 +18,30 @@
 
 - [ ] 6. Data: `amplify/data/resource.ts` con los 10 modelos y reglas de autorización del diseño (owner para progreso, grupos para gestión, Enrollment para cursos privados; answerIndex/hint/explanation NO legibles por estudiantes). *(Req 2.1, 2.2; T-301..T-303)*
 
-- [ ] 7. Seed idempotente: `scripts/seed.ts` carga `src/content/estadistica.ts` (curso, 6 unidades, 8 subtemas, 16 ejercicios) al sandbox; correrlo 2 veces y verificar que no duplica. *(Req 2.3; T-304, T-305)*
+- [ ] 7. **Seed idempotente del curso a DynamoDB** *(Req 2.3; T-304, T-305)* — instrucciones completas:
+
+  **Contexto:** el schema (10 modelos, incluido `Activity` agregado en review) YA está desplegado — `amplify_outputs.json` tiene la sección `data`. **NO correr `ampx sandbox`** (no hay cambios de schema).
+
+  Crear `scripts/seed.ts` (ejecutable con `npx tsx`) que:
+
+  1. Configure Amplify con `amplify_outputs.json` y **autentique** con `signIn` de `aws-amplify/auth` usando las variables de entorno `GUIA_SEED_EMAIL` y `GUIA_SEED_PASSWORD` (el modo de autorización del schema es userPool; los admins tienen permisos de creación). **PROHIBIDO hardcodear credenciales.**
+  2. Use `generateClient<Schema>()` y cargue desde `src/content/estadistica.ts`:
+     - 1 `Course`: code `CBS00074`, name, institution, visibility `private`, credits 4, `teacherId` = userId del usuario autenticado (`getCurrentUser`)
+     - 6 `Unit` (order + title)
+     - 8 `Subtopic` — ⚠️ el contenido usa `name`/`short`, el schema usa `title`/`short`: **mapear name→title**; `bookRefs` como JSON
+     - 16 `Exercise` (level, difficulty, prompt, options, answerIndex, hint, explanation)
+     - 6 `Activity` (una por Unit: Quiz 1 / Taller 1 / Quiz 2 / Taller 2 / Examen parcial / Trabajo final; type quiz|taller|examen; `rubric` JSON `[{criterion, weight}]` p.ej. concepto 60/interpretación 40; `unlockThreshold` 0.6)
+  3. Sea **IDEMPOTENTE** por clave natural: Course por `code`; Unit por (courseId, order); Subtopic por (unitId, order); Exercise por (subtopicId, prompt); Activity por (unitId, title). Si existe → skip (no update, no duplicado).
+  4. Imprima resumen: creados/omitidos por modelo.
+
+  **Verificación obligatoria antes de reportar** — ejecutar DOS veces:
+  ```bash
+  GUIA_SEED_EMAIL=admin.demo@guia.app GUIA_SEED_PASSWORD='GuIA-2026!' \
+    AWS_PROFILE=guia npx tsx scripts/seed.ts
+  ```
+  La **segunda corrida debe dar 0 creados**. Además `npm test` y `npm run build` en verde.
+
+  **Al terminar: DETENTE y reporta los conteos de ambas corridas** — Claude hace review antes de pasar a la tarea 8.
 
 - [ ] 8. Function `next-exercise` usando `src/engine/selector.ts`; probar que responde ejercicio sin answerIndex + motivo. *(Req 3.1; T-404a)*
 
