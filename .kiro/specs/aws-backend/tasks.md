@@ -16,7 +16,7 @@
 
 - [x] 5. Flujo primer ingreso: usuario creado con AdminCreateUser entra con contraseña temporal → pantalla de crear contraseña (confirmSignIn NEW_PASSWORD_REQUIRED). Probar creando un usuario invitado manualmente. *(Req 1.3; T-205)*
 
-- [ ] 6. Data: `amplify/data/resource.ts` con los 10 modelos y reglas de autorización del diseño (owner para progreso, grupos para gestión, Enrollment para cursos privados; answerIndex/hint/explanation NO legibles por estudiantes). *(Req 2.1, 2.2; T-301..T-303)*
+- [x] 6. Data: `amplify/data/resource.ts` con los 10 modelos y reglas de autorización del diseño (owner para progreso, grupos para gestión, Enrollment para cursos privados; answerIndex/hint/explanation NO legibles por estudiantes). *(Req 2.1, 2.2; T-301..T-303)* — ✅ Kiro (9 modelos) + fix de review (Activity); schema desplegado.
 
 - [x] 7. **Seed idempotente del curso a DynamoDB** *(Req 2.3; T-304, T-305)* — instrucciones completas:
 
@@ -43,14 +43,24 @@
 
   **Al terminar: DETENTE y reporta los conteos de ambas corridas** — Claude hace review antes de pasar a la tarea 8.
 
-- [ ] 8. Function `next-exercise` usando `src/engine/selector.ts`; probar que responde ejercicio sin answerIndex + motivo. *(Req 3.1; T-404a)*
+- [ ] 8. Function `next-exercise` usando `src/engine/selector.ts`; responde ejercicio SIN answerIndex + motivo. *(Req 3.1; T-404a)*
 
-- [ ] 9. Function `submit-answer` usando `src/engine/mastery.ts`; escribe MasteryState/RouteLog/GameState; devuelve resultado con hint/explanation. *(Req 3.2; T-404b)*
+- [ ] 9. Function `submit-answer` usando `src/engine/mastery.ts`; valida contra answerIndex en BD, escribe MasteryState/RouteLog/GameState (¡2 upserts de GameState: scope 'global' Y scope=courseId!); devuelve `{ok, before, after, xp, streak, level, hint, explanation}`. *(Req 3.2; T-404b)*
+
+  **Guía técnica Gen2 (tareas 8-9, hacerlas juntas):**
+  - `amplify/functions/next-exercise/resource.ts`: `defineFunction({ name, entry: './handler.ts' })`; ídem submit-answer. Registrarlas en `backend.ts`.
+  - Exponerlas como **custom operations** en el schema (`amplify/data/resource.ts`):
+    `nextExercise: a.query().returns(a.json()).handler(a.handler.function(nextExercise)).authorization((allow) => [allow.authenticated()])` y
+    `submitAnswer: a.mutation().arguments({ exerciseId: a.string().required(), optionIndex: a.integer().required() }).returns(a.json()).handler(a.handler.function(submitAnswer)).authorization((allow) => [allow.authenticated()])`.
+  - Acceso a datos desde las functions: al final del schema añadir `.authorization((allow) => [allow.resource(nextExercise), allow.resource(submitAnswer)])` y en el handler usar `generateClient<Schema>()` con env de la function (patrón "function calling data" de Amplify Gen2).
+  - El userId del caller llega en `event.identity` (AppSync) — usarlo para MasteryState/GameState del usuario.
+  - Importar el engine con rutas relativas (`../../../src/engine/...`) — es TS puro sin dependencias.
+  - Verificación: `npx ampx sandbox --once --profile guia` + invocar la query/mutation (puede ser con un mini script tsx autenticado como estudiante.demo) y mostrar respuesta del motor con `reason` y sin `answerIndex`.
 
 - [ ] 10. Migrar `PracticeContext` a la nube: nueva implementación del provider llamando a las functions (MISMA interfaz PracticeApi); verificar que la práctica persiste al recargar la página. *(Req 3; T-405-cloud)*
 
 - [ ] 11. Function `tutor` (hint/chat/explanation) con `LLM_PROVIDER=bedrock` + IAM `bedrock:InvokeModel`; smoke test: chat responde `source:'ai'`; sin permisos → fallback. Conectar frontend (VITE_TUTOR_API o mutation). *(Req 4; T-601..T-604)*
 
-- [ ] 12. Amplify Hosting: conectar repo GitHub rama main, build de Vite, URL pública; verificar la app completa en la URL. *(Req 5; T-1301)*
+- [x] 12. Amplify Hosting: conectar repo GitHub rama main, build de Vite, URL pública; verificar la app completa en la URL. *(Req 5; T-1301)* — ✅ https://main.dnshoh9una50.amplifyapp.com (CI con tests; pendiente solo la regla SPA de rewrites en consola).
 
 - [ ] 13. QA end-to-end en la URL pública (recorrido estudiante completo + docente) y reporte de hallazgos en docs/07. *(T-1302 parcial)*
