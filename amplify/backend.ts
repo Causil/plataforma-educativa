@@ -1,11 +1,13 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
+import { data } from './data/resource';
 
 /**
  * Backend de GuIA — Amplify Gen2.
- * Fase actual: Auth (E2). Data y Functions llegan con el spec aws-backend
- * (.kiro/specs/aws-backend/) en las siguientes tareas.
+ * Auth (T-202) + Data (T-301..T-303).
+ * Functions llegan con las siguientes tareas del spec aws-backend.
  */
 defineBackend({
   auth,
+  data,
 });
