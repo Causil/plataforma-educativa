@@ -18,7 +18,7 @@
 
 - [ ] 6. Data: `amplify/data/resource.ts` con los 10 modelos y reglas de autorización del diseño (owner para progreso, grupos para gestión, Enrollment para cursos privados; answerIndex/hint/explanation NO legibles por estudiantes). *(Req 2.1, 2.2; T-301..T-303)*
 
-- [ ] 7. **Seed idempotente del curso a DynamoDB** *(Req 2.3; T-304, T-305)* — instrucciones completas:
+- [x] 7. **Seed idempotente del curso a DynamoDB** *(Req 2.3; T-304, T-305)* — instrucciones completas:
 
   **Contexto:** el schema (10 modelos, incluido `Activity` agregado en review) YA está desplegado — `amplify_outputs.json` tiene la sección `data`. **NO correr `ampx sandbox`** (no hay cambios de schema).
 
