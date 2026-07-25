@@ -6,15 +6,15 @@
 > Todo comando ampx lleva `--profile guia`.
 > Tras CADA tarea: `npm test` y `npm run build` deben quedar en verde.
 
-- [ ] 1. Inicializar Amplify Gen2 en el repo (`npm create amplify@latest`), estructura `amplify/` con backend.ts vacío funcional; `npx ampx sandbox` levanta. *(Req 5; T-201)*
+- [x] 1. Inicializar Amplify Gen2 en el repo (`npm create amplify@latest`), estructura `amplify/` con backend.ts vacío funcional; `npx ampx sandbox` levanta. *(Req 5; T-201)*
 
-- [ ] 2. Auth: `amplify/auth/resource.ts` con login por email y grupos `students`/`teachers`/`admins`; crear 3 usuarios de prueba (uno por grupo). *(Req 1.1; T-202)*
+- [x] 2. Auth: `amplify/auth/resource.ts` con login por email y grupos `students`/`teachers`/`admins`; crear 3 usuarios de prueba (uno por grupo). *(Req 1.1; T-202)*
 
-- [ ] 3. Conectar Login.tsx a Cognito (signIn de aws-amplify) conservando el diseño actual; redirección por grupo; guards reales en el router (estudiante no entra a /docente). *(Req 1.1, 1.4; T-203, T-206)*
+- [x] 3. Conectar Login.tsx a Cognito (signIn de aws-amplify) conservando el diseño actual; redirección por grupo; guards reales en el router (estudiante no entra a /docente). *(Req 1.1, 1.4; T-203, T-206)*
 
-- [ ] 4. Flujo recuperar contraseña (resetPassword + confirmResetPassword) con la UI de 2 pasos del prototipo. *(Req 1.2; T-204)*
+- [x] 4. Flujo recuperar contraseña (resetPassword + confirmResetPassword) con la UI de 2 pasos del prototipo. *(Req 1.2; T-204)*
 
-- [ ] 5. Flujo primer ingreso: usuario creado con AdminCreateUser entra con contraseña temporal → pantalla de crear contraseña (confirmSignIn NEW_PASSWORD_REQUIRED). Probar creando un usuario invitado manualmente. *(Req 1.3; T-205)*
+- [x] 5. Flujo primer ingreso: usuario creado con AdminCreateUser entra con contraseña temporal → pantalla de crear contraseña (confirmSignIn NEW_PASSWORD_REQUIRED). Probar creando un usuario invitado manualmente. *(Req 1.3; T-205)*
 
 - [ ] 6. Data: `amplify/data/resource.ts` con los 10 modelos y reglas de autorización del diseño (owner para progreso, grupos para gestión, Enrollment para cursos privados; answerIndex/hint/explanation NO legibles por estudiantes). *(Req 2.1, 2.2; T-301..T-303)*
 

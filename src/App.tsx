@@ -1,5 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { PracticeProvider } from './state/PracticeContext';
+import { AuthProvider } from './state/AuthContext';
+import { RequireRole } from './components/RequireRole';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Curso from './pages/Curso';
@@ -10,19 +12,36 @@ import Stub from './pages/Stub';
 
 export default function App() {
   return (
-    <PracticeProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/curso" element={<Curso />} />
-          <Route path="/diagnostico" element={<Diagnostico />} />
-          <Route path="/practica" element={<Practica />} />
-          <Route path="/docente" element={<Docente />} />
-          <Route path="/admin" element={<Stub title="Administración" epic="E10" />} />
-          <Route path="*" element={<Landing />} />
-        </Routes>
-      </BrowserRouter>
-    </PracticeProvider>
+    <AuthProvider>
+      <PracticeProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/curso"
+              element={<RequireRole allow={['est', 'prof', 'adm']}><Curso /></RequireRole>}
+            />
+            <Route
+              path="/diagnostico"
+              element={<RequireRole allow={['est', 'prof', 'adm']}><Diagnostico /></RequireRole>}
+            />
+            <Route
+              path="/practica"
+              element={<RequireRole allow={['est', 'prof', 'adm']}><Practica /></RequireRole>}
+            />
+            <Route
+              path="/docente"
+              element={<RequireRole allow={['prof', 'adm']}><Docente /></RequireRole>}
+            />
+            <Route
+              path="/admin"
+              element={<RequireRole allow={['adm']}><Stub title="Administración" epic="E10" /></RequireRole>}
+            />
+            <Route path="*" element={<Landing />} />
+          </Routes>
+        </BrowserRouter>
+      </PracticeProvider>
+    </AuthProvider>
   );
 }

@@ -9,7 +9,7 @@ dist/
 build/
 .env
 .env.*
-amplify_outputs.json
+# amplify_outputs.json — SE COMMITEA: solo contiene IDs públicos del cliente (van en el bundle JS igualmente)
 .amplify/
 
 # Sistema

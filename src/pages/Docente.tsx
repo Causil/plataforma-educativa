@@ -4,6 +4,7 @@ import { Logo } from '../components/Logo';
 import { SUBTOPICS, ESTADISTICA } from '../content/estadistica';
 import { DEMO_GROUP, DEMO_USAGE } from '../content/demoGroup';
 import { parseRosterCsv, type RosterResult } from '../lib/roster';
+import { useAuth } from '../state/AuthContext';
 
 const cellStyle = (v: number): React.CSSProperties => {
   const col = v >= 75 ? 'var(--m-high)' : v >= 45 ? 'var(--m-mid)' : 'var(--m-low)';
@@ -18,6 +19,8 @@ const initials = (n: string) =>
 
 export default function Docente() {
   const nav = useNavigate();
+  const { session, logout } = useAuth();
+  const userName = session?.email.split('@')[0] ?? 'profesor';
   const [toast, setToast] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [roster, setRoster] = useState<RosterResult | null>(null);
@@ -79,10 +82,10 @@ export default function Docente() {
         <div className="spacer" />
         <span className="rolepill">🧑‍🏫 Profesor</span>
         <div className="who">
-          <span>Prof. Javier</span>
-          <div className="avatar">JA</div>
+          <span>{userName}</span>
+          <div className="avatar">{userName.slice(0, 2).toUpperCase()}</div>
         </div>
-        <button className="link" onClick={() => nav('/')}>Salir</button>
+        <button className="link" onClick={() => void logout().then(() => nav('/'))}>Salir</button>
       </header>
 
       {/* Mis cursos */}

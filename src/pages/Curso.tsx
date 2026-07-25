@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { SUBTOPICS, UNITS, ESTADISTICA } from '../content/estadistica';
 import { usePractice } from '../state/PracticeContext';
+import { useAuth } from '../state/AuthContext';
 import { MASTERY_THRESHOLD } from '../engine/selector';
 
 const ACTIVITIES: Record<string, string> = {
@@ -15,6 +16,8 @@ const barColor = (m: number) =>
 export default function Curso() {
   const nav = useNavigate();
   const { mastery, stats } = usePractice();
+  const { session, logout } = useAuth();
+  const userName = session?.email.split('@')[0] ?? 'estudiante';
 
   const avg =
     SUBTOPICS.reduce((acc, s) => acc + mastery[s.id], 0) / SUBTOPICS.length;
@@ -29,10 +32,10 @@ export default function Curso() {
         <div className="spacer" />
         <span className="rolepill">🎓 Estudiante</span>
         <div className="who">
-          <span>Sofía</span>
-          <div className="avatar">SO</div>
+          <span>{userName}</span>
+          <div className="avatar">{userName.slice(0, 2).toUpperCase()}</div>
         </div>
-        <button className="link" onClick={() => nav('/')}>Salir</button>
+        <button className="link" onClick={() => void logout().then(() => nav('/'))}>Salir</button>
       </header>
 
       <div className="card course-head">

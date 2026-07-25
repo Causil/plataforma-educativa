@@ -1,0 +1,45 @@
+{
+  "auth": {
+    "user_pool_id": "us-east-1_YUlvwbLCQ",
+    "aws_region": "us-east-1",
+    "user_pool_client_id": "3hokm469pmvtiqej1fgit3ik3i",
+    "identity_pool_id": "us-east-1:b573fa58-4e2b-4117-b5dc-a3ca42df4ee2",
+    "mfa_methods": [],
+    "standard_required_attributes": [
+      "email"
+    ],
+    "username_attributes": [
+      "email"
+    ],
+    "user_verification_types": [
+      "email"
+    ],
+    "groups": [
+      {
+        "students": {
+          "precedence": 0
+        }
+      },
+      {
+        "teachers": {
+          "precedence": 1
+        }
+      },
+      {
+        "admins": {
+          "precedence": 2
+        }
+      }
+    ],
+    "mfa_configuration": "NONE",
+    "password_policy": {
+      "min_length": 8,
+      "require_lowercase": true,
+      "require_numbers": true,
+      "require_symbols": true,
+      "require_uppercase": true
+    },
+    "unauthenticated_identities_enabled": true
+  },
+  "version": "1.4"
+}
