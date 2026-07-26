@@ -61,7 +61,7 @@
 
 - [x] 11. Function `tutor` (hint/chat/explanation) con `LLM_PROVIDER=bedrock` + IAM `bedrock:InvokeModel`; smoke test: chat responde `source:'ai'`; sin permisos → fallback. Conectar frontend (VITE_TUTOR_API o mutation). *(Req 4; T-601..T-604)*
 
-- [x] 12. Amplify Hosting: conectar repo GitHub rama main, build de Vite, URL pública; verificar la app completa en la URL. *(Req 5; T-1301)* — ✅ https://main.dnshoh9una50.amplifyapp.com (CI con tests; pendiente solo la regla SPA de rewrites en consola).
+- [x] 12. Amplify Hosting: conectar repo GitHub rama main, build de Vite, URL pública; verificar la app completa en la URL. *(Req 5; T-1301)* — ✅ https://main.dnshoh9una50.amplifyapp.com (CI con tests + regla SPA regex-200 activa — todas las rutas directas en 200).
 
 - [ ] 13. **QA end-to-end** *(T-1302)* — instrucciones completas:
 
