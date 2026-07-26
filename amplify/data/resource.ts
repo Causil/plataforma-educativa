@@ -1,6 +1,7 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 import { nextExercise } from '../functions/next-exercise/resource';
 import { submitAnswer } from '../functions/submit-answer/resource';
+import { tutor } from '../functions/tutor/resource';
 
 /**
  * GuIA — Esquema de datos (T-301..T-303, T-404a/b)
@@ -197,6 +198,16 @@ const schema = a
       })
       .returns(a.json())
       .handler(a.handler.function(submitAnswer))
+      .authorization((allow) => [allow.authenticated()]),
+
+    askTutor: a
+      .query()
+      .arguments({
+        kind: a.string().required(), // 'chat' | 'hint' | 'explanation'
+        payload: a.string().required(), // JSON con ctx + campos según kind
+      })
+      .returns(a.json())
+      .handler(a.handler.function(tutor))
       .authorization((allow) => [allow.authenticated()]),
   })
   .authorization((allow) => [

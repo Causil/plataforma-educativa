@@ -1,6 +1,7 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
+import { tutor } from './functions/tutor/resource';
 import { nextExercise } from './functions/next-exercise/resource';
 import { submitAnswer } from './functions/submit-answer/resource';
 
@@ -13,4 +14,5 @@ defineBackend({
   data,
   nextExercise,
   submitAnswer,
+  tutor,
 });

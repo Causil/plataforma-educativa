@@ -1,17 +1,18 @@
 /**
- * Capa del tutor SEGURA PARA NAVEGADOR (sin SDKs de Node).
+ * Capa del tutor SEGURA PARA NAVEGADOR.
  *
- * - En producción llama a la API (Lambda `chatTutor`, T-603) vía fetch.
- * - Sin API configurada (o si falla), degrada elegantemente al fallback local
- *   con la bibliografía del subtema — el estudiante nunca se queda sin ayuda.
- *
- * La capa Node (SDK Anthropic/Bedrock) vive en `tutor.ts` y solo la usan
- * las Lambdas y el laboratorio CLI.
+ * Llama a la Lambda `tutor` vía AppSync (query askTutor) — la autenticación
+ * viaja con el token de Cognito y la API key del modelo vive como secreto de
+ * la function (nunca en el navegador). Si algo falla, degrada elegantemente
+ * al fallback local con la bibliografía del subtema.
  */
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../../amplify/data/resource';
 import type { TutorAnswer } from './answer';
 import type { TutorContext } from './prompts';
 
-const API_URL: string | undefined = import.meta.env?.VITE_TUTOR_API;
+const client = generateClient<Schema>();
+const parse = (raw: unknown) => (typeof raw === 'string' ? JSON.parse(raw) : raw);
 
 function chatFallback(ctx: TutorContext): TutorAnswer {
   const ref = ctx.bookRefs[0];
@@ -24,17 +25,14 @@ function chatFallback(ctx: TutorContext): TutorAnswer {
 }
 
 export async function chatTutor(ctx: TutorContext, question: string): Promise<TutorAnswer> {
-  if (!API_URL) return chatFallback(ctx);
   try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ kind: 'chat', ctx, question }),
-      signal: AbortSignal.timeout(10_000),
+    const q = await client.queries.askTutor({
+      kind: 'chat',
+      payload: JSON.stringify({ ctx, question }),
     });
-    if (!res.ok) return chatFallback(ctx);
-    const data = (await res.json()) as { text?: string };
-    return data.text ? { text: data.text, source: 'ai' } : chatFallback(ctx);
+    const r = parse(q.data) as { text?: string; source?: string; error?: string };
+    if (r?.text) return { text: r.text, source: r.source === 'ai' ? 'ai' : 'fallback' };
+    return chatFallback(ctx);
   } catch {
     return chatFallback(ctx);
   }

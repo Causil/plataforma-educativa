@@ -1213,7 +1213,57 @@
           ]
         }
       },
-      "nonModels": {}
+      "nonModels": {},
+      "queries": {
+        "nextExercise": {
+          "name": "nextExercise",
+          "isArray": false,
+          "type": "AWSJSON",
+          "isRequired": false
+        },
+        "askTutor": {
+          "name": "askTutor",
+          "isArray": false,
+          "type": "AWSJSON",
+          "isRequired": false,
+          "arguments": {
+            "kind": {
+              "name": "kind",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true
+            },
+            "payload": {
+              "name": "payload",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true
+            }
+          }
+        }
+      },
+      "mutations": {
+        "submitAnswer": {
+          "name": "submitAnswer",
+          "isArray": false,
+          "type": "AWSJSON",
+          "isRequired": false,
+          "arguments": {
+            "exerciseId": {
+              "name": "exerciseId",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true
+            },
+            "optionIndex": {
+              "name": "optionIndex",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": true
+            }
+          }
+        }
+      }
     }
   },
   "version": "1.4"
