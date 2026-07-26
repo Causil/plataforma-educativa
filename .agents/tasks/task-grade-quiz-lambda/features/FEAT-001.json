@@ -1,0 +1,26 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Implement gradeQuiz Lambda function (handler + resource), register it in the Amplify data schema as a custom mutation, and register in backend.ts. The Lambda grades a quiz by loading exercises from DynamoDB, computing a rubric score (concepto 60% + consistencia 40%), creating a Submission record, and returning the result.",
+  "status": "in_progress",
+  "steps": [
+    "Create amplify/functions/grade-quiz/resource.ts exporting a defineFunction() call following the exact pattern in amplify/functions/submit-answer/resource.ts. Name: 'grade-quiz', entry: './handler.ts', timeoutSeconds: 10.",
+    "Create amplify/functions/grade-quiz/handler.ts implementing the gradeQuiz Lambda. Follow the same Amplify Gen2 pattern as submit-answer/handler.ts: import Schema type from '../../data/resource', import getAmplifyDataClientConfig from '@aws-amplify/backend/function/runtime', import env from '$amplify/env/grade-quiz', configure Amplify and generate client. The handler accepts AppSyncEvent with arguments: activityId (string) and answers (array of {exerciseId: string, optionIndex: number}). Steps: (1) Validate user is authenticated via event.identity.sub/username, (2) Parse the answers array from arguments, (3) For each answer, load the Exercise from DynamoDB using client.models.Exercise.get to get answerIndex, (4) Compute grade: concepto = (correct_count / total) * 60, compute best_streak of consecutive correct answers, consistencia = (best_streak / total) * 40, total = Math.round(concepto + consistencia), (5) Create Submission record via client.models.Submission.create with activityId, studentId (userId), answers (JSON), score (total), rubricScores (JSON with per-criterion breakdown like [{criterion:'Dominio del concepto',weight:60,score:Math.round(concepto)},{criterion:'Consistencia',weight:40,score:Math.round(consistencia)}]), owner: userId, (6) Return {score: total, rubricScores, correct: correct_count, total: answers.length}.",
+    "In amplify/data/resource.ts: (a) Add import for gradeQuiz from '../functions/grade-quiz/resource', (b) Add a gradeQuiz custom mutation in the schema with arguments: activityId (a.string().required()) and answers (a.json().required()), returns a.json(), handler a.handler.function(gradeQuiz), authorization allow.authenticated(), (c) Add allow.resource(gradeQuiz) to the schema-level .authorization() array.",
+    "In amplify/backend.ts: Import gradeQuiz from './functions/grade-quiz/resource' and add it to the defineBackend() call."
+  ],
+  "acceptance_criteria": [
+    "amplify/functions/grade-quiz/resource.ts exists and exports gradeQuiz via defineFunction()",
+    "amplify/functions/grade-quiz/handler.ts exists with correct grading logic (concepto 60% + consistencia 40%)",
+    "amplify/data/resource.ts has gradeQuiz mutation defined with activityId and answers arguments",
+    "amplify/data/resource.ts schema-level authorization includes allow.resource(gradeQuiz)",
+    "amplify/backend.ts imports and registers gradeQuiz",
+    "TypeScript compilation succeeds (npx tsc -b or equivalent check)"
+  ],
+  "verification": [
+    "Run npx tsc --noEmit --project amplify/tsconfig.json to check types (may have issues with generated types but structural correctness is key)",
+    "Manually verify the handler.ts rubric math matches: concepto = (correct/total)*60, best_streak calculation, consistencia = (best_streak/total)*40"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

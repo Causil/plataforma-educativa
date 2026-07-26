@@ -1,6 +1,7 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 import { nextExercise } from '../functions/next-exercise/resource';
 import { submitAnswer } from '../functions/submit-answer/resource';
+import { gradeQuiz } from '../functions/grade-quiz/resource';
 import { tutor } from '../functions/tutor/resource';
 
 /**
@@ -209,10 +210,21 @@ const schema = a
       .returns(a.json())
       .handler(a.handler.function(tutor))
       .authorization((allow) => [allow.authenticated()]),
+
+    gradeQuiz: a
+      .mutation()
+      .arguments({
+        activityId: a.string().required(),
+        answers: a.json().required(),
+      })
+      .returns(a.json())
+      .handler(a.handler.function(gradeQuiz))
+      .authorization((allow) => [allow.authenticated()]),
   })
   .authorization((allow) => [
     allow.resource(nextExercise),
     allow.resource(submitAnswer),
+    allow.resource(gradeQuiz),
   ]);
 
 export type Schema = ClientSchema<typeof schema>;
