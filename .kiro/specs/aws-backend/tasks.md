@@ -63,4 +63,22 @@
 
 - [x] 12. Amplify Hosting: conectar repo GitHub rama main, build de Vite, URL pública; verificar la app completa en la URL. *(Req 5; T-1301)* — ✅ https://main.dnshoh9una50.amplifyapp.com (CI con tests; pendiente solo la regla SPA de rewrites en consola).
 
-- [ ] 13. QA end-to-end en la URL pública (recorrido estudiante completo + docente) y reporte de hallazgos en docs/07. *(T-1302 parcial)*
+- [ ] 13. **QA end-to-end** *(T-1302)* — instrucciones completas:
+
+  **Regla de oro: SOLO LECTURA.** No modificar código ni desplegar nada. El
+  entregable es el reporte `docs/08-qa-report.md`; los fixes los decide el
+  review de Claude.
+
+  **A. Verificación automatizada (correr y pegar resultados):**
+  1. `npm test` y `npm run build` (deben estar verdes)
+  2. `GUIA_SMOKE_EMAIL=estudiante.demo@guia.app GUIA_SMOKE_PASSWORD='GuIA-2026!' AWS_PROFILE=guia npx tsx scripts/api-smoke.ts` — motor en la nube
+  3. Mismas vars + `npx tsx scripts/tutor-cloud-smoke.ts` — tutor IA (esperar `source: ai`)
+  4. Rutas públicas con curl (código HTTP de `/`, `/login`, `/curso`, `/practica`, `/docente` en https://main.dnshoh9una50.amplifyapp.com) — anotar si alguna ≠200
+
+  **B. Auditoría spec↔realidad (leer, no ejecutar):**
+  5. Recorrer `requirements.md` de este spec y marcar por requisito: CUMPLE / PARCIAL / FALTA, con evidencia (archivo o script que lo prueba)
+  6. Revisar que ningún archivo del repo contenga secretos (grep de `sk-ant`, `AKIA`, contraseñas) ni PII real
+
+  **C. Reporte (`docs/08-qa-report.md`):** tabla de resultados A+B, lista de
+  hallazgos ordenada por severidad (bloqueante/mayor/menor), y veredicto final
+  "¿listo para entregar?". Al terminar DETENTE — Claude revisa el reporte.
