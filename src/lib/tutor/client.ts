@@ -8,7 +8,7 @@
  * código no cambia al alternar (T-002 solo cambia una variable de entorno).
  */
 import Anthropic from '@anthropic-ai/sdk';
-import { AnthropicBedrockMantle } from '@anthropic-ai/bedrock-sdk';
+import { AnthropicBedrock } from '@anthropic-ai/bedrock-sdk';
 
 export type Provider = 'anthropic' | 'bedrock';
 /** Nivel del modelo según la tarea (arquitectura §1.3). */
@@ -16,7 +16,13 @@ export type Tier = 'fast' | 'smart';
 
 const MODELS: Record<Provider, Record<Tier, string>> = {
   anthropic: { fast: 'claude-haiku-4-5', smart: 'claude-sonnet-5' },
-  bedrock: { fast: 'anthropic.claude-haiku-4-5', smart: 'anthropic.claude-sonnet-5' },
+  // Endpoint clásico bedrock-runtime con INFERENCE PROFILES (us.*): es el
+  // camino habilitado por el use-case form de Anthropic en esta cuenta
+  // (el endpoint Mantle tiene gating aparte y devolvía 403). Verificado 26-jul.
+  bedrock: {
+    fast: 'us.anthropic.claude-haiku-4-5-20251001-v1:0',
+    smart: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
+  },
 };
 
 export function provider(): Provider {
@@ -27,14 +33,14 @@ export function modelFor(tier: Tier): string {
   return MODELS[provider()][tier];
 }
 
-type LlmClient = Anthropic | AnthropicBedrockMantle;
+type LlmClient = Anthropic | AnthropicBedrock;
 let cached: LlmClient | null = null;
 
 export function llm(): LlmClient {
   if (!cached) {
     cached =
       provider() === 'bedrock'
-        ? new AnthropicBedrockMantle({
+        ? new AnthropicBedrock({
             awsRegion: process.env.AWS_REGION ?? 'us-east-1',
           })
         : new Anthropic();
