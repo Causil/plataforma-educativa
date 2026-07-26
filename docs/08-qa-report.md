@@ -111,3 +111,19 @@ El hallazgo H2 (Anthropic vs Bedrock) no bloquea la demo pero pierde puntos en "
 
 **Veredicto final tras el review: ✅ LISTO PARA ENTREGAR.**
 *Excelente trabajo de auditoría de Kiro: preciso en los 2 hallazgos reales, cero falsos positivos en seguridad/PII.*
+
+---
+
+## 🚨 Adenda post-QA · 26-jul noche — H5: bug crítico cazado al eliminar datos quemados
+
+Al convertir los paneles docente/admin a **datos 100 % reales** (decisión de producto:
+la plataforma se usará con estudiantes reales), se descubrió que las tablas de progreso
+estaban **vacías** en DynamoDB.
+
+| | |
+|---|---|
+| **Bug** | `submit-answer` pasaba `owner` en los creates, pero el campo no existía en los inputs generados por AppSync (`CreateMasteryStateInput`…) → **todas las escrituras de progreso eran rechazadas** (MasteryState, RouteLog, GameState) |
+| **Por qué nadie lo vio** | El data client no lanza excepción: devuelve `{data, errors}` y el handler ignoraba `errors`, respondiendo valores calculados en memoria. `api-smoke` validaba la *respuesta*, no la *escritura* — por eso el QA lo dio por bueno |
+| **Fix** | Campo `owner: a.string()` explícito en los 4 modelos de progreso + helper `must()` que falla fuerte si una escritura devuelve errores (fin de los fallos silenciosos) |
+| **Verificación** | Conteos DynamoDB > 0 tras el smoke; segunda corrida arranca del estado persistido (XP acumula, el selector avanza de subtema) |
+| **Lección** | Un smoke debe verificar el **efecto** (fila en la BD), no solo la respuesta. Y los paneles con datos reales son también una herramienta de QA: los datos quemados escondían el bug |
