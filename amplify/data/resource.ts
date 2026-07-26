@@ -2,6 +2,8 @@ import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 import { nextExercise } from '../functions/next-exercise/resource';
 import { submitAnswer } from '../functions/submit-answer/resource';
 import { tutor } from '../functions/tutor/resource';
+import { enrollStudents } from '../functions/enroll-students/resource';
+import { adminStats } from '../functions/admin-stats/resource';
 
 /**
  * GuIA — Esquema de datos (T-301..T-303, T-404a/b)
@@ -109,6 +111,8 @@ const schema = a
       .model({
         courseId: a.id().required(),
         studentId: a.string().required(),
+        email: a.string(),
+        fullName: a.string(),
         document: a.string(),
         source: a.enum(['xlsx', 'self']),
         status: a.string(),
@@ -124,6 +128,7 @@ const schema = a
 
     MasteryState: a
       .model({
+        owner: a.string(),
         studentId: a.string().required(),
         subtopicId: a.id().required(),
         mastery: a.float().required(),
@@ -138,6 +143,7 @@ const schema = a
 
     RouteLog: a
       .model({
+        owner: a.string(),
         studentId: a.string().required(),
         step: a.integer().required(),
         subtopicId: a.id().required(),
@@ -154,6 +160,7 @@ const schema = a
 
     GameState: a
       .model({
+        owner: a.string(),
         studentId: a.string().required(),
         scope: a.string().required(),
         xp: a.integer().required(),
@@ -169,6 +176,7 @@ const schema = a
 
     Submission: a
       .model({
+        owner: a.string(),
         activityId: a.id().required(),
         studentId: a.string().required(),
         answers: a.json(),
@@ -200,6 +208,24 @@ const schema = a
       .handler(a.handler.function(submitAnswer))
       .authorization((allow) => [allow.authenticated()]),
 
+    /** Matrícula real (R02): crea cuentas Cognito, invita por correo y registra Enrollment. */
+    enrollStudents: a
+      .mutation()
+      .arguments({
+        courseId: a.string().required(),
+        students: a.string().required(), // JSON: [{document, fullName, email}]
+      })
+      .returns(a.json())
+      .handler(a.handler.function(enrollStudents))
+      .authorization((allow) => [allow.groups(['teachers', 'admins'])]),
+
+    /** Estadísticas reales de la plataforma para el panel admin. */
+    adminStats: a
+      .query()
+      .returns(a.json())
+      .handler(a.handler.function(adminStats))
+      .authorization((allow) => [allow.groups(['admins'])]),
+
     askTutor: a
       .query()
       .arguments({
@@ -213,6 +239,8 @@ const schema = a
   .authorization((allow) => [
     allow.resource(nextExercise),
     allow.resource(submitAnswer),
+    allow.resource(enrollStudents),
+    allow.resource(adminStats),
   ]);
 
 export type Schema = ClientSchema<typeof schema>;

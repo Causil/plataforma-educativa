@@ -625,6 +625,20 @@
               "isRequired": true,
               "attributes": []
             },
+            "email": {
+              "name": "email",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "fullName": {
+              "name": "fullName",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
             "document": {
               "name": "document",
               "isArray": false,
@@ -718,6 +732,13 @@
               "isArray": false,
               "type": "ID",
               "isRequired": true,
+              "attributes": []
+            },
+            "owner": {
+              "name": "owner",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
               "attributes": []
             },
             "studentId": {
@@ -832,6 +853,13 @@
               "isArray": false,
               "type": "ID",
               "isRequired": true,
+              "attributes": []
+            },
+            "owner": {
+              "name": "owner",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
               "attributes": []
             },
             "studentId": {
@@ -962,6 +990,13 @@
               "isRequired": true,
               "attributes": []
             },
+            "owner": {
+              "name": "owner",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
             "studentId": {
               "name": "studentId",
               "isArray": false,
@@ -1081,6 +1116,13 @@
               "isArray": false,
               "type": "ID",
               "isRequired": true,
+              "attributes": []
+            },
+            "owner": {
+              "name": "owner",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
               "attributes": []
             },
             "activityId": {
@@ -1221,6 +1263,12 @@
           "type": "AWSJSON",
           "isRequired": false
         },
+        "adminStats": {
+          "name": "adminStats",
+          "isArray": false,
+          "type": "AWSJSON",
+          "isRequired": false
+        },
         "askTutor": {
           "name": "askTutor",
           "isArray": false,
@@ -1259,6 +1307,26 @@
               "name": "optionIndex",
               "isArray": false,
               "type": "Int",
+              "isRequired": true
+            }
+          }
+        },
+        "enrollStudents": {
+          "name": "enrollStudents",
+          "isArray": false,
+          "type": "AWSJSON",
+          "isRequired": false,
+          "arguments": {
+            "courseId": {
+              "name": "courseId",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true
+            },
+            "students": {
+              "name": "students",
+              "isArray": false,
+              "type": "String",
               "isRequired": true
             }
           }

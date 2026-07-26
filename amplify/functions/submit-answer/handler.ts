@@ -25,6 +25,18 @@ Amplify.configure(resourceConfig, libraryOptions);
 
 const client = generateClient<Schema>();
 
+/** Las escrituras del data client NO lanzan: devuelven {data, errors}. Fallar fuerte. */
+const must = <T>(res: { data: T | null; errors?: { message: string }[] }, what: string): T => {
+  if (res.errors?.length) {
+    console.error(`${what} FALLÓ:`, JSON.stringify(res.errors));
+    throw new Error(`${what}: ${res.errors.map((e) => e.message).join('; ')}`);
+  }
+  if (res.data === null || res.data === undefined) {
+    throw new Error(`${what}: sin datos en la respuesta`);
+  }
+  return res.data;
+};
+
 /** XP por respuesta correcta (base) y bonus por racha. */
 const XP_CORRECT = 10;
 const XP_STREAK_BONUS = 5;
@@ -100,23 +112,29 @@ export const handler = async (event: AppSyncEvent) => {
 
     // 4. Escribir/actualizar MasteryState
     if (masteryId) {
-      await client.models.MasteryState.update({
-        id: masteryId,
-        mastery: realResult.after,
-        streak: newStreak,
-        consecutiveFails: newConsecutiveFails,
-        attempts: (existingMastery![0].attempts ?? 0) + 1,
-      });
+      must(
+        await client.models.MasteryState.update({
+          id: masteryId,
+          mastery: realResult.after,
+          streak: newStreak,
+          consecutiveFails: newConsecutiveFails,
+          attempts: (existingMastery![0].attempts ?? 0) + 1,
+        }),
+        'MasteryState.update',
+      );
     } else {
-      await client.models.MasteryState.create({
-        studentId: userId,
-        subtopicId: exercise.subtopicId,
-        mastery: realResult.after,
-        streak: newStreak,
-        consecutiveFails: newConsecutiveFails,
-        attempts: 1,
-        owner: userId,
-      });
+      must(
+        await client.models.MasteryState.create({
+          studentId: userId,
+          subtopicId: exercise.subtopicId,
+          mastery: realResult.after,
+          streak: newStreak,
+          consecutiveFails: newConsecutiveFails,
+          attempts: 1,
+          owner: userId,
+        }),
+        'MasteryState.create',
+      );
     }
 
     // 5. Escribir RouteLog
@@ -127,17 +145,20 @@ export const handler = async (event: AppSyncEvent) => {
     });
     const step = (prevLogs?.length ?? 0) + 1;
 
-    await client.models.RouteLog.create({
-      studentId: userId,
-      step,
-      subtopicId: exercise.subtopicId,
-      difficulty: exercise.difficulty,
-      ok,
-      masteryBefore: realResult.before,
-      masteryAfter: realResult.after,
-      reason: ok ? 'Respuesta correcta' : 'Respuesta incorrecta',
-      owner: userId,
-    });
+    must(
+      await client.models.RouteLog.create({
+        studentId: userId,
+        step,
+        subtopicId: exercise.subtopicId,
+        difficulty: exercise.difficulty,
+        ok,
+        masteryBefore: realResult.before,
+        masteryAfter: realResult.after,
+        reason: ok ? 'Respuesta correcta' : 'Respuesta incorrecta',
+        owner: userId,
+      }),
+      'RouteLog.create',
+    );
 
     // 6. Actualizar GameState (doble upsert: scope='global' Y scope=courseId)
     const xpGained = ok ? XP_CORRECT + (newStreak > 1 ? XP_STREAK_BONUS : 0) : 0;
@@ -165,24 +186,30 @@ export const handler = async (event: AppSyncEvent) => {
         const gs = existingGS[0];
         const newXp = (gs.xp ?? 0) + xpGained;
         const newGameStreak = ok ? (gs.streak ?? 0) + 1 : 0;
-        await client.models.GameState.update({
-          id: gs.id,
-          xp: newXp,
-          level: levelFromXp(newXp),
-          streak: newGameStreak,
-        });
+        must(
+          await client.models.GameState.update({
+            id: gs.id,
+            xp: newXp,
+            level: levelFromXp(newXp),
+            streak: newGameStreak,
+          }),
+          'GameState.update',
+        );
         return { xp: newXp, level: levelFromXp(newXp), streak: newGameStreak };
       } else {
         const newXp = xpGained;
         const newGameStreak = ok ? 1 : 0;
-        await client.models.GameState.create({
-          studentId: userId,
-          scope,
-          xp: newXp,
-          level: levelFromXp(newXp),
-          streak: newGameStreak,
-          owner: userId,
-        });
+        must(
+          await client.models.GameState.create({
+            studentId: userId,
+            scope,
+            xp: newXp,
+            level: levelFromXp(newXp),
+            streak: newGameStreak,
+            owner: userId,
+          }),
+          'GameState.create',
+        );
         return { xp: newXp, level: levelFromXp(newXp), streak: newGameStreak };
       }
     };
