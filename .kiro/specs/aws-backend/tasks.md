@@ -43,9 +43,9 @@
 
   **Al terminar: DETENTE y reporta los conteos de ambas corridas** — Claude hace review antes de pasar a la tarea 8.
 
-- [ ] 8. Function `next-exercise` usando `src/engine/selector.ts`; responde ejercicio SIN answerIndex + motivo. *(Req 3.1; T-404a)*
+- [x] 8. Function `next-exercise` usando `src/engine/selector.ts`; responde ejercicio SIN answerIndex + motivo. *(Req 3.1; T-404a)*
 
-- [ ] 9. Function `submit-answer` usando `src/engine/mastery.ts`; valida contra answerIndex en BD, escribe MasteryState/RouteLog/GameState (¡2 upserts de GameState: scope 'global' Y scope=courseId!); devuelve `{ok, before, after, xp, streak, level, hint, explanation}`. *(Req 3.2; T-404b)*
+- [x] 9. Function `submit-answer` usando `src/engine/mastery.ts`; valida contra answerIndex en BD, escribe MasteryState/RouteLog/GameState (¡2 upserts de GameState: scope 'global' Y scope=courseId!); devuelve `{ok, before, after, xp, streak, level, hint, explanation}`. *(Req 3.2; T-404b)*
 
   **Guía técnica Gen2 (tareas 8-9, hacerlas juntas):**
   - `amplify/functions/next-exercise/resource.ts`: `defineFunction({ name, entry: './handler.ts' })`; ídem submit-answer. Registrarlas en `backend.ts`.
