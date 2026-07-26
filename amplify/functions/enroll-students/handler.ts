@@ -116,7 +116,7 @@ export const handler = async (event: AppSyncEvent) => {
 
       let enrolled = false;
       if (!enrolledEmails.has(email)) {
-        await client.models.Enrollment.create({
+        const created = await client.models.Enrollment.create({
           courseId,
           studentId: sub,
           email,
@@ -125,6 +125,9 @@ export const handler = async (event: AppSyncEvent) => {
           source: 'xlsx',
           status: status === 'invited' ? 'invited' : 'active',
         });
+        if (created.errors?.length) {
+          throw new Error(`Enrollment: ${created.errors.map((e) => e.message).join('; ')}`);
+        }
         enrolledEmails.add(email);
         enrolled = true;
       }
