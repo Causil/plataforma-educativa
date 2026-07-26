@@ -65,16 +65,20 @@ export const handler = async (event: AppSyncEvent) => {
   }
 
   try {
-    // 1. Cargar ejercicios y evaluar cada respuesta en orden
+    // 1. Cargar ejercicios en paralelo y evaluar cada respuesta
+    const exerciseResults = await Promise.all(
+      answers.map((ans) => client.models.Exercise.get({ id: ans.exerciseId }))
+    );
+
     const oks: boolean[] = [];
     let correctCount = 0;
 
-    for (const ans of answers) {
-      const { data: exercise } = await client.models.Exercise.get({ id: ans.exerciseId });
+    for (let i = 0; i < answers.length; i++) {
+      const exercise = exerciseResults[i].data;
       if (!exercise) {
-        return { error: `Ejercicio no encontrado: ${ans.exerciseId}` };
+        return { error: `Ejercicio no encontrado: ${answers[i].exerciseId}` };
       }
-      const isCorrect = ans.optionIndex === exercise.answerIndex;
+      const isCorrect = answers[i].optionIndex === exercise.answerIndex;
       oks.push(isCorrect);
       if (isCorrect) correctCount++;
     }
