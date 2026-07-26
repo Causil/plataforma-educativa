@@ -82,3 +82,5 @@
   **C. Reporte (`docs/08-qa-report.md`):** tabla de resultados A+B, lista de
   hallazgos ordenada por severidad (bloqueante/mayor/menor), y veredicto final
   "¿listo para entregar?". Al terminar DETENTE — Claude revisa el reporte.
+
+- [x] 14. **Post-QA · datos 100 % reales y fix H5** *(26-jul noche)* — paneles docente/admin sin valores quemados: heatmap/KPIs/seguimiento desde MasteryState+RouteLog+GameState; matrícula real (Lambda `enroll-students`: AdminCreateUser + invitación email + Enrollment idempotente); `adminStats` (Cognito + conteos DynamoDB). **H5**: los creates de `submit-answer` pasaban `owner` sin que existiera en los inputs generados → AppSync rechazaba TODAS las escrituras de progreso y el handler ignoraba `res.errors`. Fix: `owner: a.string()` explícito en los 4 modelos de progreso + `must()` (fallar fuerte). Ver adenda en docs/08-qa-report.md.
