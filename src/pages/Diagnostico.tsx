@@ -43,8 +43,8 @@ export default function Diagnostico() {
     if (idx + 1 < items.length) {
       setIdx(idx + 1);
     } else {
-      applyDiagnostic(next);
-      setPhase('done');
+      // guarda el dominio inicial en la NUBE (MasteryState) y muestra el mapa
+      void applyDiagnostic(next).then(() => setPhase('done'));
     }
   };
 

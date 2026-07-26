@@ -57,7 +57,7 @@
   - Importar el engine con rutas relativas (`../../../src/engine/...`) — es TS puro sin dependencias.
   - Verificación: `npx ampx sandbox --once --profile guia` + invocar la query/mutation (puede ser con un mini script tsx autenticado como estudiante.demo) y mostrar respuesta del motor con `reason` y sin `answerIndex`.
 
-- [ ] 10. Migrar `PracticeContext` a la nube: nueva implementación del provider llamando a las functions (MISMA interfaz PracticeApi); verificar que la práctica persiste al recargar la página. *(Req 3; T-405-cloud)*
+- [x] 10. Migrar `PracticeContext` a la nube: nueva implementación del provider llamando a las functions (MISMA interfaz PracticeApi); verificar que la práctica persiste al recargar la página. *(Req 3; T-405-cloud)*
 
 - [ ] 11. Function `tutor` (hint/chat/explanation) con `LLM_PROVIDER=bedrock` + IAM `bedrock:InvokeModel`; smoke test: chat responde `source:'ai'`; sin permisos → fallback. Conectar frontend (VITE_TUTOR_API o mutation). *(Req 4; T-601..T-604)*
 

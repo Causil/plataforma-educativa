@@ -20,9 +20,10 @@ interface ChatMsg {
 export default function Practica() {
   const nav = useNavigate();
   const { t } = useTranslation();
-  const { mastery, stats, route, current, next, answer } = usePractice();
+  const { ready, mastery, stats, route, current, next, answer } = usePractice();
 
   const [picked, setPicked] = useState<number | null>(null);
+  const [grading, setGrading] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [chat, setChat] = useState<ChatMsg[]>([
     {
@@ -35,31 +36,41 @@ export default function Practica() {
   const logRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!current) next();
+    if (ready && !current) void next();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ready]);
 
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
   }, [chat]);
 
-  if (!current) return null;
+  if (!ready || !current) {
+    return (
+      <div className="wrap" style={{ minHeight: '60vh', display: 'grid', placeItems: 'center' }}>
+        <div className="card" style={{ padding: 24, color: 'var(--ink-2)' }}>
+          Cargando tu ruta desde la nube…
+        </div>
+      </div>
+    );
+  }
   const { exercise, selection } = current;
   const sub = SUBTOPICS.find((s) => s.id === exercise.subtopicId)!;
   const answered = picked !== null;
   const ok = answered && picked === exercise.answerIndex;
 
-  const onPick = (i: number) => {
-    if (answered) return;
-    const wasOk = answer(i);
+  const onPick = async (i: number) => {
+    if (answered || grading) return;
     setPicked(i);
+    setGrading(true);
+    const wasOk = await answer(i); // el SERVIDOR califica y persiste
+    setGrading(false);
     if (!wasOk) setShowHint(true);
   };
 
   const onNext = () => {
     setPicked(null);
     setShowHint(false);
-    next();
+    void next();
   };
 
   const sendChat = async (q: string) => {
@@ -161,11 +172,7 @@ export default function Practica() {
                   </button>
                 )}
                 <span className={`feedback ${answered ? (ok ? 'ok' : 'no') : ''}`}>
-                  {answered
-                    ? ok
-                      ? t('practice.correct', { points: 10 * exercise.difficulty })
-                      : t('practice.wrong')
-                    : ''}
+                  {grading ? 'Calificando…' : answered ? (ok ? '¡Correcto! ✔' : t('practice.wrong')) : ''}
                 </span>
               </div>
             </div>
