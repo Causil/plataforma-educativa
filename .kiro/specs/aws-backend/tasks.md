@@ -84,3 +84,82 @@
   "¿listo para entregar?". Al terminar DETENTE — Claude revisa el reporte.
 
 - [x] 14. **Post-QA · datos 100 % reales y fix H5** *(26-jul noche)* — paneles docente/admin sin valores quemados: heatmap/KPIs/seguimiento desde MasteryState+RouteLog+GameState; matrícula real (Lambda `enroll-students`: AdminCreateUser + invitación email + Enrollment idempotente); `adminStats` (Cognito + conteos DynamoDB). **H5**: los creates de `submit-answer` pasaban `owner` sin que existiera en los inputs generados → AppSync rechazaba TODAS las escrituras de progreso y el handler ignoraba `res.errors`. Fix: `owner: a.string()` explícito en los 4 modelos de progreso + `must()` (fallar fuerte). Ver adenda en docs/08-qa-report.md.
+
+- [ ] 15. **Correo de invitación: enlace de inicio de sesión + copy profesional en español** *(R02; T-207)*
+
+  Hoy `amplify/auth/resource.ts` no define ninguna plantilla, así que Cognito
+  envía su mensaje por defecto: en inglés, sin enlace y sin marca
+  (*"Your username is … and temporary password is …"*). Es el **primer contacto
+  del estudiante con GuIA** y aparece en el video (guion 0:35).
+
+  **Qué construir**
+
+  1. En `amplify/auth/resource.ts`, dentro de `loginWith.email`, añadir
+     `userInvitation: { emailSubject, emailBody }`. `emailBody` recibe
+     `(user, code)` — funciones que devuelven los marcadores de Cognito.
+  2. La URL de la app va en **una sola constante exportada** (p. ej.
+     `amplify/constants.ts` → `export const APP_URL = 'https://main.dnshoh9una50.amplifyapp.com'`),
+     no repetida en el HTML. El enlace apunta a `${APP_URL}/login`.
+
+  **Restricciones que NO son negociables**
+
+  - La plantilla es **global del User Pool**: los únicos datos disponibles son
+    `{username}` y `{####}`. **No intentes** nombrar el curso, el docente ni la
+    institución como si fueran datos reales — no los tienes. Redacta en
+    genérico ("tu institución te matriculó en un curso").
+  - Cognito **rechaza el despliegue** si el cuerpo no contiene *ambos*
+    marcadores. Asunto ≤ 140 caracteres, cuerpo ≤ 20 000.
+  - HTML de correo, no de web: layout con `<table>`, **estilos inline**,
+    ancho máx. 600 px, sin `<style>`, sin JS, sin imágenes ni fuentes externas
+    (Gmail las bloquea). El logo va como texto/carácter, no como `<img>`.
+  - Botón de acción **y además** la URL en texto plano debajo, porque muchos
+    clientes no renderizan el botón.
+  - La contraseña temporal debe verse **seleccionable como texto**
+    (`<code>` con fondo claro), nunca dentro de una imagen.
+  - **No toques nada más de `defineAuth`.** Cambiar `groups`,
+    `userAttributes.required` o el modo de `loginWith` puede forzar el
+    reemplazo del User Pool y **borrar las cuentas demo**
+    (estudiante/profe/admin.demo) a un día del cierre. Solo se agrega
+    `userInvitation`.
+  - **No inventes el plazo de vencimiento.** Lee el valor real del pool
+    (`AdminCreateUserConfig.UnusedAccountValidityDays` / la política de
+    contraseñas temporales) y usa ese número en el texto.
+
+  **Contenido del correo** (redacción base; puedes pulir el tono, no la estructura)
+
+  - Asunto: `Activa tu cuenta en GuIA`
+  - Encabezado con la marca **GuIA** (teal `#0FB5A6`).
+  - Una línea de qué es: *tutor de estudio con IA que se adapta a tu ritmo*.
+  - Por qué recibe esto: *tu institución te matriculó en un curso privado de la plataforma*.
+  - Bloque de credenciales: **usuario** = `{username}`, **contraseña temporal** = `{####}`.
+  - Botón **"Entrar a GuIA"** → `${APP_URL}/login` + la URL en texto plano.
+  - Qué va a pasar: *al entrar con la contraseña temporal, la plataforma te
+    pedirá crear la tuya definitiva*.
+  - Aviso de vencimiento con el número real de días.
+  - Pie: *si no esperabas este correo, ignóralo — no se creó ningún perfil público a tu nombre.*
+  - Sin emojis decorativos, sin signos de exclamación en cadena. Tono de
+    universidad: cálido pero serio.
+
+  **Verificación — obligatoria antes de marcar la tarea** (lección de H5/H6:
+  se verifica el **efecto**, no la respuesta)
+
+  1. `npx ampx sandbox --once --profile guia` despliega sin error.
+  2. Confirmar que la plantilla **quedó aplicada en AWS**, no solo en el código:
+     `aws cognito-idp describe-user-pool --user-pool-id <id> --profile guia
+     --query 'UserPool.AdminCreateUserConfig.InviteMessageTemplate'`
+  3. Crear un usuario de prueba con un **alias de Gmail**
+     (`tucorreo+kiro15@gmail.com`) desde `/docente` o con `AdminCreateUser`,
+     **recibir el correo de verdad** y adjuntar captura de cómo se ve en Gmail.
+  4. Hacer clic en el enlace → cae en `/login` → entrar con la contraseña
+     temporal → sale la pantalla de crear contraseña definitiva → entra.
+  5. **Borrar el usuario de prueba** al terminar (`AdminDeleteUser`).
+  6. `npm test` y `npm run build` en verde.
+
+  ⚠️ Cada corrida de la prueba **envía correo real**. Usa solo alias tuyos.
+
+  **Fuera de alcance (P2, documentar en el PR, no construir):** remitente
+  institucional propio. Hoy sale de `no-reply@verificationemail.com` con el
+  envío por defecto de Cognito, limitado a **50 correos/día** — insuficiente
+  para varios grupos reales. La ruta es SES con dominio verificado, y con SES
+  también se podría personalizar por curso enviando el correo desde
+  `enroll-students` con `MessageAction: 'SUPPRESS'`.
