@@ -85,7 +85,7 @@
 
 - [x] 14. **Post-QA · datos 100 % reales y fix H5** *(26-jul noche)* — paneles docente/admin sin valores quemados: heatmap/KPIs/seguimiento desde MasteryState+RouteLog+GameState; matrícula real (Lambda `enroll-students`: AdminCreateUser + invitación email + Enrollment idempotente); `adminStats` (Cognito + conteos DynamoDB). **H5**: los creates de `submit-answer` pasaban `owner` sin que existiera en los inputs generados → AppSync rechazaba TODAS las escrituras de progreso y el handler ignoraba `res.errors`. Fix: `owner: a.string()` explícito en los 4 modelos de progreso + `must()` (fallar fuerte). Ver adenda en docs/08-qa-report.md.
 
-- [ ] 15. **Correo de invitación: enlace de inicio de sesión + copy profesional en español** *(R02; T-207)*
+- [x] 15. **Correo de invitación: enlace de inicio de sesión + copy profesional en español** *(R02; T-207)* — ✅ Kiro + review de Claude (26-jul noche). `userInvitation` en `loginWith.email` con HTML de tablas y estilos inline; `APP_URL` en `amplify/constants.ts`. Verificación completa: plantilla aplicada en AWS (`describe-user-pool`), correo real recibido en alias de Gmail, enlace → login con contraseña temporal → pantalla de contraseña definitiva, usuario de prueba borrado. 48 tests + build en verde. Sin tocar `groups`, `userAttributes` ni el modo de `loginWith` (el User Pool no se reemplazó).
 
   Hoy `amplify/auth/resource.ts` no define ninguna plantilla, así que Cognito
   envía su mensaje por defecto: en inglés, sin enlace y sin marca
