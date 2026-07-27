@@ -127,3 +127,19 @@ estaban **vacías** en DynamoDB.
 | **Fix** | Campo `owner: a.string()` explícito en los 4 modelos de progreso + helper `must()` que falla fuerte si una escritura devuelve errores (fin de los fallos silenciosos) |
 | **Verificación** | Conteos DynamoDB > 0 tras el smoke; segunda corrida arranca del estado persistido (XP acumula, el selector avanza de subtema) |
 | **Lección** | Un smoke debe verificar el **efecto** (fila en la BD), no solo la respuesta. Y los paneles con datos reales son también una herramienta de QA: los datos quemados escondían el bug |
+
+---
+
+## 🚨 Adenda post-QA · 26-jul noche — H6: el parser de matrícula no leía el CSV real
+
+Validando el flujo del **profesor** en producción, al subir el listado oficial en `/docente`
+el toast respondía *"No pude leer estudiantes … revisa el formato"* con 0 estudiantes.
+
+| | |
+|---|---|
+| **Bug** | `parseRosterCsv` partía cada línea con `line.split(',')`, sin manejar comillas. El export real de Excel entrecomilla todos los campos de texto → el parser leía el encabezado como `"NOMBRE"` (con comillas), no lo reconocía, y devolvía *"Encabezados incompletos"* |
+| **Por qué nadie lo vio** | El `SAMPLE` de `roster.test.ts` estaba escrito **a mano y sin comillas**: los 6 tests pasaban contra un formato que el Politécnico nunca produce. Misma familia que H5 — el test verificaba una realidad inexistente |
+| **Agravante de UX** | El motivo real (`result.errors[0]`) se descartaba y se mostraba un genérico "revisa el formato", que no dice qué revisar |
+| **Fix** | Tokenizador CSV RFC 4180 en `src/lib/roster.ts`: campos entrecomillados, separador y saltos de línea dentro de comillas, `""` escapada, BOM, última fila sin salto final y **detección de separador** (`,` / `;` / tab — Excel en locale ES exporta con `;`). El toast ahora muestra el motivo real y avisa si sueltas un `.xlsx` |
+| **Verificación** | 6 tests nuevos con el formato entrecomillado real (+ BOM, `;`, comas dentro de un apellido): **48/48 en verde**. Parseo del archivo real de `docs/insumos/` → estudiantes leídos, 0 errores |
+| **Lección** | Un fixture de test debe ser **el archivo real**, no una transcripción a mano. Si el insumo existe en el repo, el test lo lee del disco o lo copia byte a byte |

@@ -8,7 +8,8 @@
  *   - Una fila por estudiante.
  *
  * Tolerante a: tildes, mayúsculas/minúsculas, espacios extra, columnas en
- * otro orden y filas vacías. Aquí se procesa CSV (export del xlsx);
+ * otro orden, filas vacías, campos entrecomillados, BOM y separador `;`
+ * (export de Excel en locale ES). Aquí se procesa CSV (export del xlsx);
  * la Lambda `parseRoster` (T-902) añadirá lectura .xlsx nativa con SheetJS.
  */
 
@@ -36,13 +37,78 @@ function norm(cell: string): string {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function splitCsvLine(line: string): string[] {
-  // El formato del Poli no usa comillas ni comas internas; split simple.
-  return line.split(',').map((c) => c.trim());
+/**
+ * Detecta el separador real contando ocurrencias fuera de comillas.
+ * Excel en locale ES exporta con `;`; el export "CSV UTF-8" usa `,`.
+ */
+function detectDelimiter(text: string): string {
+  const counts: Record<string, number> = { ',': 0, ';': 0, '\t': 0 };
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '"') {
+      if (inQuotes && text[i + 1] === '"') i++;
+      else inQuotes = !inQuotes;
+    } else if (!inQuotes && ch in counts) {
+      counts[ch]++;
+    }
+  }
+  return Object.keys(counts).reduce((best, c) => (counts[c] > counts[best] ? c : best), ',');
+}
+
+/**
+ * Tokeniza CSV al estilo RFC 4180: campos entrecomillados pueden contener el
+ * separador y saltos de línea, y `""` es una comilla escapada.
+ * Devuelve filas de celdas ya recortadas.
+ */
+function parseCsvRows(text: string): string[][] {
+  const src = text.charCodeAt(0) === 0xfeff ? text.slice(1) : text; // quita BOM
+  const delim = detectDelimiter(src);
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = '';
+  let inQuotes = false;
+
+  const endField = () => {
+    row.push(field.trim());
+    field = '';
+  };
+  const endRow = () => {
+    endField();
+    rows.push(row);
+    row = [];
+  };
+
+  for (let i = 0; i < src.length; i++) {
+    const ch = src[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (src[i + 1] === '"') {
+          field += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        field += ch;
+      }
+      continue;
+    }
+    if (ch === '"') inQuotes = true;
+    else if (ch === delim) endField();
+    else if (ch === '\r') {
+      if (src[i + 1] === '\n') i++;
+      endRow();
+    } else if (ch === '\n') endRow();
+    else field += ch;
+  }
+  endRow(); // última fila (aunque el archivo no termine en salto de línea)
+
+  return rows;
 }
 
 export function parseRosterCsv(text: string): RosterResult {
-  const lines = text.split(/\r?\n/);
+  const lines = parseCsvRows(text);
   const errors: string[] = [];
   const students: RosterStudent[] = [];
 
@@ -50,7 +116,7 @@ export function parseRosterCsv(text: string): RosterResult {
   let headerIdx = -1;
   let cols: Record<string, number> = {};
   for (let i = 0; i < lines.length; i++) {
-    const cells = splitCsvLine(lines[i]).map(norm);
+    const cells = lines[i].map(norm);
     if (cells.some((c) => c.includes('DOCUMENTO')) && cells.some((c) => c.includes('CORREO'))) {
       headerIdx = i;
       cells.forEach((c, idx) => {
@@ -79,9 +145,8 @@ export function parseRosterCsv(text: string): RosterResult {
 
   // 2. Filas de estudiantes
   for (let i = headerIdx + 1; i < lines.length; i++) {
-    const raw = lines[i];
-    if (!raw.trim()) continue;
-    const cells = splitCsvLine(raw);
+    const cells = lines[i];
+    if (cells.every((c) => !c)) continue;
     const document = (cells[cols.document] ?? '').trim();
     const name = (cells[cols.name] ?? '').trim();
     const ln1 = cols.lastName1 !== undefined ? (cells[cols.lastName1] ?? '').trim() : '';

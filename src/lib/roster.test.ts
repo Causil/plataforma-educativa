@@ -59,3 +59,64 @@ describe('parseRosterCsv — formato real del Politécnico', () => {
     expect(r.students).toHaveLength(4);
   });
 });
+
+/**
+ * Formato tal cual sale del "Guardar como CSV" de Excel: TODO campo de texto
+ * viene entrecomillado. El parser ingenuo (split por coma) leía `"NOMBRE"` con
+ * comillas y no reconocía el encabezado → 0 estudiantes (bug real en /docente).
+ */
+const QUOTED = `"LISTADO DE ASISTENCIA",,,,,,
+"ASIGNATURA:","0310-TECNOLOGÍA EN COSTOS Y AUDITORIA",,,,,
+"DOCENTE:","Javier Andrés Causil Martínez",,,,,
+"FECHA:","29-Sep-2025",,,"HORA DE INICIO: 6:00","HORA FIN: 8:00",
+"MUNICIPIO:","Barbosa",,,,,
+"N°","DOCUMENTO","NOMBRE","PRIMER APELLIDO","SEGUNDO APELLIDO","CORREO ELECTRONICO","ASISTENCIA (SI/NO)"
+1,1000000001,"ANA","MUÑOZ","PEREZ","ana_munoz00000@elpoli.edu.co","SI"
+2,1000000002,"CARLOS","RENDON","GIL","carlos_rendon00000@elpoli.edu.co","SI"
+`;
+
+describe('parseRosterCsv — variantes de export de Excel', () => {
+  it('lee campos entrecomillados (export real del Poli)', () => {
+    const r = parseRosterCsv(QUOTED);
+    expect(r.errors).toEqual([]);
+    expect(r.students).toHaveLength(2);
+    expect(r.students[0]).toEqual({
+      document: '1000000001',
+      fullName: 'ANA MUÑOZ PEREZ',
+      email: 'ana_munoz00000@elpoli.edu.co',
+    });
+  });
+
+  it('tolera BOM al inicio del archivo', () => {
+    const r = parseRosterCsv('﻿' + QUOTED);
+    expect(r.students).toHaveLength(2);
+  });
+
+  it('tolera separador ";" (Excel en locale ES)', () => {
+    const semi = QUOTED.split('\n')
+      .map((l) => l.replace(/,/g, ';'))
+      .join('\n');
+    const r = parseRosterCsv(semi);
+    expect(r.students).toHaveLength(2);
+  });
+
+  it('respeta comas dentro de campos entrecomillados', () => {
+    const withComma = QUOTED.replace('"MUÑOZ"', '"MUÑOZ, DE LA CRUZ"');
+    const r = parseRosterCsv(withComma);
+    expect(r.students).toHaveLength(2);
+    expect(r.students[0].email).toBe('ana_munoz00000@elpoli.edu.co');
+    expect(r.students[0].fullName).toBe('ANA MUÑOZ, DE LA CRUZ PEREZ');
+  });
+
+  it('lee la última fila aunque el archivo no termine en salto de línea', () => {
+    const r = parseRosterCsv(QUOTED.trimEnd());
+    expect(r.students).toHaveLength(2);
+  });
+
+  it('archivo con encabezado pero sin filas → cero estudiantes y sin errores falsos', () => {
+    const onlyHeader = QUOTED.split('\n').slice(0, 6).join('\n');
+    const r = parseRosterCsv(onlyHeader);
+    expect(r.students).toHaveLength(0);
+    expect(r.errors).toEqual([]);
+  });
+});

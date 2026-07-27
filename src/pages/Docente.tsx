@@ -218,6 +218,10 @@ export default function Docente() {
 
   // ── Matrícula real (R02) ─────────────────────────────────────────────────
   const onFile = async (file: File) => {
+    if (/\.xlsx?$/i.test(file.name)) {
+      notify(`⚠️ ${file.name} es un Excel — guárdalo como CSV y vuelve a subirlo`);
+      return;
+    }
     const text = await file.text();
     const result = parseRosterCsv(text);
     setRoster(result);
@@ -229,7 +233,10 @@ export default function Docente() {
           (result.errors.length ? ` · ${result.errors.length} fila(s) con error` : ''),
       );
     } else {
-      notify(`⚠️ No pude leer estudiantes de ${file.name} — revisa el formato`);
+      // El motivo real importa: sin él, "revisa el formato" no dice qué revisar.
+      notify(
+        `⚠️ No pude leer estudiantes de ${file.name} — ${result.errors[0] ?? 'el archivo no tiene filas de estudiantes'}`,
+      );
     }
   };
 
