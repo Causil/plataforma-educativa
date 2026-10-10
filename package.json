@@ -27,6 +27,7 @@
     "@aws-amplify/backend": "^1.23.0",
     "@aws-amplify/backend-cli": "^1.8.3",
     "@aws-sdk/client-cognito-identity-provider": "^3.1095.0",
+    "@aws-sdk/client-ssm": "^3.1149.0",
     "@types/katex": "^0.16.7",
     "@types/node": "^26.1.1",
     "@types/react": "^18.3.8",

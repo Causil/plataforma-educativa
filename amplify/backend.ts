@@ -8,6 +8,7 @@ import { submitAnswer } from './functions/submit-answer/resource';
 import { enrollStudents } from './functions/enroll-students/resource';
 import { adminStats } from './functions/admin-stats/resource';
 import { storage } from './storage/resource';
+import { ANTHROPIC_KEY_PARAM } from './constants';
 
 /**
  * Backend de GuIA — Amplify Gen2.
@@ -58,3 +59,13 @@ backend.storage.resources.cfnResources.cfnBucket.lifecycleConfiguration = {
     expirationInDays: 180,
   })),
 };
+
+// La API key de Anthropic se lee de SSM (ver constants.ts); clave SecureString
+// con la llave administrada aws/ssm, así que basta ssm:GetParameter.
+const { region, account } = backend.tutor.stack;
+backend.tutor.resources.lambda.addToRolePolicy(
+  new PolicyStatement({
+    actions: ['ssm:GetParameter'],
+    resources: [`arn:aws:ssm:${region}:${account}:parameter${ANTHROPIC_KEY_PARAM}`],
+  }),
+);

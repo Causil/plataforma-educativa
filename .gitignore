@@ -9,7 +9,9 @@ dist/
 build/
 .env
 .env.*
-# amplify_outputs.json — SE COMMITEA: solo contiene IDs públicos del cliente (van en el bundle JS igualmente)
+# amplify_outputs.json — NO se commitea: en Amplify Hosting lo genera
+# pipeline-deploy (backend de producción); en local apunta al sandbox.
+amplify_outputs.json
 .amplify/
 
 # Sistema

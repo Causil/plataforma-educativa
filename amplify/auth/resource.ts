@@ -84,6 +84,14 @@ export const auth = defineAuth({
       },
     },
   },
+  // Correos de Cognito (invitación, recuperación) por SES con el dominio
+  // verificado: sin el tope diario del remitente por defecto de Cognito.
+  senders: {
+    email: {
+      fromEmail: 'no-responder@jcausil.com',
+      fromName: 'GuIA',
+    },
+  },
   groups: ['students', 'teachers', 'admins'],
   userAttributes: {
     email: {

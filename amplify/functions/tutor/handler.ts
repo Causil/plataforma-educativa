@@ -6,6 +6,9 @@
  */
 import { chatTutor, getExplanation, getHint } from '../../../src/lib/tutor/tutor';
 import type { TutorContext } from '../../../src/lib/tutor/prompts';
+import { loadAnthropicKey } from '../_shared/anthropic-key';
+
+await loadAnthropicKey();
 
 interface AppSyncEvent {
   identity?: { sub?: string; username?: string };
