@@ -95,7 +95,7 @@ Todas con el helper `must()` y fallo explícito ante `errors` del data client (l
   - [ ] Verificar identidad en SES us-east-1 (dominio o correo remitente) y **solicitar salida del sandbox**
   - [ ] Conseguir un examen ya calificado a mano (enunciado, solucionario, ~10 hojas anonimizadas) para la calibración F6
   - [ ] Decidir: backend de producción por pipeline de rama `main` (recomendado antes de notas reales) vs. seguir con `ampx sandbox`
-- [ ] **F1 · Datos y storage** — modelos `Exam`/`ExamGrade`, `defineStorage` con rutas y permisos, pruebas de permisos (estudiante no lee solucionario ni rúbrica ni notas no enviadas)
+- [~] **F1 · Datos y storage** — código listo y validado con `cdk synth` (10-oct); pendiente deploy + `scripts/exam-permissions-smoke.ts` · modelos `Exam`/`ExamGrade`, `defineStorage` con rutas y permisos, pruebas de permisos (estudiante no lee solucionario ni rúbrica ni notas no enviadas)
 - [ ] **F2 · Rúbrica IA** — `build-rubric` + editor + aprobación; prueba con el examen de F0
 - [ ] **F3 · Calificación** — SQS + DLQ + `grade-exam` (transcripción → verificación numérica → calificación → triage) + validación de esquema + caching; funciones puras (suma/escala/tolerancias/triage) con tests; smoke que verifica `ExamGrade` en BD
 - [ ] **F4 · Revisión docente** — páginas de entregas y revisión con semáforo, transcripción visible, ajuste de nota con motivo, aprobación individual / lote de 🟢; flujo de calibración (5 primeras → casos resueltos en la rúbrica)

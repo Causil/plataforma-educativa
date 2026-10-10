@@ -7,14 +7,17 @@ import { nextExercise } from './functions/next-exercise/resource';
 import { submitAnswer } from './functions/submit-answer/resource';
 import { enrollStudents } from './functions/enroll-students/resource';
 import { adminStats } from './functions/admin-stats/resource';
+import { storage } from './storage/resource';
 
 /**
  * Backend de GuIA — Amplify Gen2.
- * Auth (T-202) + Data (T-301..T-303) + Functions (T-404a/b, R02, admin).
+ * Auth (T-202) + Data (T-301..T-303) + Functions (T-404a/b, R02, admin)
+ * + Storage de exámenes (E15).
  */
 const backend = defineBackend({
   auth,
   data,
+  storage,
   nextExercise,
   submitAnswer,
   tutor,
@@ -44,3 +47,14 @@ backend.adminStats.resources.lambda.addToRolePolicy(
     resources: [userPool.userPoolArn],
   }),
 );
+
+// Hojas de estudiantes (datos personales, Ley 1581): se borran solas a los
+// 180 días — cierre de semestre. Enunciados y solucionarios (exams/) se conservan.
+backend.storage.resources.cfnResources.cfnBucket.lifecycleConfiguration = {
+  rules: ['exam-submissions/', 'exam-uploads/'].map((prefix) => ({
+    id: `expira-${prefix.replace('/', '')}`,
+    status: 'Enabled',
+    prefix,
+    expirationInDays: 180,
+  })),
+};

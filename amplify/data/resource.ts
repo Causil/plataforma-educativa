@@ -189,6 +189,75 @@ const schema = a
       ]),
 
     // ─────────────────────────────────────────────────────────────────────────
+    // Exámenes calificados con IA (E15 · docs/10-calificacion-examenes.md)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /** Examen de un curso. Solucionario y rúbrica: solo docentes (campo-level). */
+    Exam: a
+      .model({
+        courseId: a.id().required(),
+        title: a.string().required(),
+        date: a.date(),
+        scaleMax: a.float().required(), // 5.0
+        passMark: a.float().required(), // 3.0
+        statementKey: a.string(),
+        solutionKey: a.string().authorization((allow) => [
+          allow.groups(['teachers', 'admins']).to(['create', 'update', 'delete', 'read']),
+        ]),
+        rubric: a.json().authorization((allow) => [
+          allow.groups(['teachers', 'admins']).to(['create', 'update', 'delete', 'read']),
+        ]),
+        rubricStatus: a.enum(['none', 'generating', 'draft', 'approved']),
+        studentUploadOpen: a.boolean(),
+        dueAt: a.datetime(),
+        status: a.enum(['draft', 'grading', 'reviewing', 'closed']),
+      })
+      .secondaryIndexes((index) => [index('courseId')])
+      .authorization((allow) => [
+        allow.groups(['teachers', 'admins']).to(['create', 'update', 'delete', 'read']),
+        allow.authenticated().to(['read']),
+      ]),
+
+    /**
+     * Calificación de un estudiante en un examen. Solo docentes/admins: el
+     * estudiante la verá en F7 vía query Lambda que filtra status = 'sent'
+     * (la auth estática no puede expresar "solo si ya se envió").
+     */
+    ExamGrade: a
+      .model({
+        examId: a.id().required(),
+        studentId: a.string().required(), // sub de Cognito (de Enrollment)
+        email: a.string(),
+        fullName: a.string(),
+        document: a.string(),
+        fileKey: a.string(),
+        uploadedBy: a.enum(['teacher', 'student']),
+        status: a.enum(['uploaded', 'queued', 'grading', 'graded', 'reviewed', 'sent', 'error']),
+        triage: a.enum(['green', 'yellow', 'red']),
+        transcription: a.json(),
+        numericChecks: a.json(),
+        aiScore: a.float(),
+        aiScore2: a.float(),
+        finalScore: a.float(),
+        perQuestion: a.json(),
+        feedback: a.string(),
+        flags: a.string().array(),
+        model: a.string(),
+        inputTokens: a.integer(),
+        outputTokens: a.integer(),
+        gradedAt: a.datetime(),
+        reviewedBy: a.string(),
+        reviewedAt: a.datetime(),
+        reviewNote: a.string(),
+        sentAt: a.datetime(),
+        error: a.string(),
+      })
+      .secondaryIndexes((index) => [index('examId')])
+      .authorization((allow) => [
+        allow.groups(['teachers', 'admins']).to(['create', 'update', 'delete', 'read']),
+      ]),
+
+    // ─────────────────────────────────────────────────────────────────────────
     // Custom operations (AppSync → Lambda)
     // ─────────────────────────────────────────────────────────────────────────
 
