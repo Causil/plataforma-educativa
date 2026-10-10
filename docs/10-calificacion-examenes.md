@@ -92,7 +92,7 @@ Todas con el helper `must()` y fallo explícito ante `errors` del data client (l
 ## Fases y tareas
 
 - [ ] **F0 · Prerrequisitos (Javier)**
-  - [ ] Verificar identidad en SES us-east-1 (dominio o correo remitente) y **solicitar salida del sandbox**
+  - [x] SES us-east-1: cuenta `guia` YA en producción (50 000 correos/día, 14/s) y dominio `jcausil.com` verificado (comprobado 10-oct)
   - [ ] Conseguir un examen ya calificado a mano (enunciado, solucionario, ~10 hojas anonimizadas) para la calibración F6
   - [ ] Decidir: backend de producción por pipeline de rama `main` (recomendado antes de notas reales) vs. seguir con `ampx sandbox`
 - [~] **F1 · Datos y storage** — código listo y validado con `cdk synth` (10-oct); pendiente deploy + `scripts/exam-permissions-smoke.ts` · modelos `Exam`/`ExamGrade`, `defineStorage` con rutas y permisos, pruebas de permisos (estudiante no lee solucionario ni rúbrica ni notas no enviadas)
