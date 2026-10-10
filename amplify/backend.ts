@@ -29,6 +29,13 @@ const backend = defineBackend({
 // Las Lambdas de matrícula y estadísticas operan sobre el user pool
 const userPool = backend.auth.resources.userPool;
 
+// Correos de Cognito por SES: en SES está verificado el DOMINIO, no la
+// dirección no-responder@. Amplify apunta SourceArn a la dirección y Cognito
+// rechaza crear el pool → se apunta a la identidad del dominio.
+const userPoolEmail = backend.auth.resources.cfnResources.cfnUserPool
+  .emailConfiguration as { sourceArn?: string };
+userPoolEmail.sourceArn = `arn:aws:ses:${backend.auth.stack.region}:${backend.auth.stack.account}:identity/jcausil.com`;
+
 backend.enrollStudents.addEnvironment('USER_POOL_ID', userPool.userPoolId);
 backend.enrollStudents.resources.lambda.addToRolePolicy(
   new PolicyStatement({
