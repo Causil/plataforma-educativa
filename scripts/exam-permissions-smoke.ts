@@ -4,8 +4,10 @@
  * lo que el estudiante no debe ver/escribir, falla.
  *
  * Uso:
- *   GUIA_TEACHER_EMAIL=profe.demo@guia.app GUIA_STUDENT_EMAIL=estudiante.demo@guia.app \
- *   GUIA_SMOKE_PASSWORD='...' npx tsx scripts/exam-permissions-smoke.ts
+ *   GUIA_TEACHER_EMAIL=... GUIA_TEACHER_PASSWORD='...' \
+ *   GUIA_STUDENT_EMAIL=... GUIA_STUDENT_PASSWORD='...' \
+ *     npx tsx scripts/exam-permissions-smoke.ts
+ * (mismas variables que escribe scripts/create-demo-users.ts)
  */
 import { Amplify } from 'aws-amplify';
 import { fetchAuthSession, signIn, signOut } from 'aws-amplify/auth';
@@ -19,9 +21,12 @@ const client = generateClient<Schema>();
 
 const TEACHER = process.env.GUIA_TEACHER_EMAIL;
 const STUDENT = process.env.GUIA_STUDENT_EMAIL;
-const PASSWORD = process.env.GUIA_SMOKE_PASSWORD;
-if (!TEACHER || !STUDENT || !PASSWORD) {
-  console.error('❌ Define GUIA_TEACHER_EMAIL, GUIA_STUDENT_EMAIL y GUIA_SMOKE_PASSWORD.');
+const PASSWORDS: Record<string, string | undefined> = {
+  [TEACHER ?? '']: process.env.GUIA_TEACHER_PASSWORD,
+  [STUDENT ?? '']: process.env.GUIA_STUDENT_PASSWORD,
+};
+if (!TEACHER || !STUDENT || !PASSWORDS[TEACHER] || !PASSWORDS[STUDENT]) {
+  console.error('❌ Define GUIA_{TEACHER,STUDENT}_{EMAIL,PASSWORD}.');
   process.exit(1);
 }
 
@@ -41,7 +46,7 @@ const fails = async (fn: () => Promise<unknown>) => {
 
 async function login(email: string) {
   await signOut();
-  await signIn({ username: email, password: PASSWORD! });
+  await signIn({ username: email, password: PASSWORDS[email]! });
   console.log(`\n🔐 ${email}`);
 }
 
@@ -92,7 +97,11 @@ async function main() {
 
   const { identityId } = await fetchAuthSession();
   const ownKey = `exam-uploads/${identityId}/${examId}.txt`;
-  check(!(await fails(() => uploadData({ path: ownKey, data: 'mía' }).result)), 'estudiante sube a su carpeta exam-uploads/');
+  const ownErr = await uploadData({ path: ownKey, data: 'mía' }).result.then(
+    () => '',
+    (e: Error) => `${e.name}: ${e.message}`,
+  );
+  check(!ownErr, `estudiante sube a su carpeta exam-uploads/ ${ownErr}`);
   check(await fails(() => uploadData({ path: `exam-uploads/us-east-1:otro/${examId}.txt`, data: 'x' }).result),
     'estudiante no escribe en carpeta ajena');
 

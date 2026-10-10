@@ -1,5 +1,5 @@
 import { defineBackend } from '@aws-amplify/backend';
-import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
 import { tutor } from './functions/tutor/resource';
@@ -74,5 +74,22 @@ backend.tutor.resources.lambda.addToRolePolicy(
   new PolicyStatement({
     actions: ['ssm:GetParameter'],
     resources: [`arn:aws:ssm:${region}:${account}:parameter${ANTHROPIC_KEY_PARAM}`],
+  }),
+);
+
+// Los usuarios de un grupo asumen el rol del GRUPO, no el rol autenticado al
+// que Amplify aplica la regla exam-uploads/{entity_id}/*. Se replica en el rol
+// de students, acotada a su propia carpeta (Identity ID de Cognito).
+const examBucket = backend.storage.resources.bucket;
+backend.auth.resources.groups['students'].role.attachInlinePolicy(
+  new Policy(backend.storage.stack, 'StudentsOwnExamUploads', {
+    statements: [
+      new PolicyStatement({
+        actions: ['s3:PutObject', 's3:GetObject'],
+        resources: [
+          `${examBucket.bucketArn}/exam-uploads/\${cognito-identity.amazonaws.com:sub}/*`,
+        ],
+      }),
+    ],
   }),
 );
